@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "sips-that-spike",
+    "name": "Sips That Spike",
     "slug": "sips-that-spike",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icons.png",
     "scheme": "sipsthatspike",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
