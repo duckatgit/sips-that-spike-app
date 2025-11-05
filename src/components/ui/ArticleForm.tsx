@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import api from "../../API/backapi";
+import api, { origin } from "../../API/backapi";
 import { toast } from "react-hot-toast";
 
 type Props = {
   openModal?: () => void;
   closeModal?: () => void;
   isModalContent?: boolean;
-  // for edit support
   article?: any;
   onSuccess?: (article: any) => void;
 };
@@ -36,33 +35,61 @@ export default function ArticleForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
-  // if editing, show existing image as preview
   useEffect(() => {
     if (article?.image) {
-      // image stored as filename in backend; served from public folder
-      setImagePreview(`/uploads/${article.image}`);
+      setImagePreview(`${origin}/uploads/${article.image}`);
     }
   }, [article]);
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed");
+      return;
+    }
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("Image must be <= 2MB");
+      return;
+    }
+
+    if (objectUrl) {
+      URL.revokeObjectURL(objectUrl);
+      setObjectUrl(null);
+    }
+
+    const url = URL.createObjectURL(file);
+    setObjectUrl(url);
     setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setImagePreview(url);
   };
+
+  useEffect(() => {
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [objectUrl]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) {
-      toast.error("Title is required");
-      return;
-    }
+    const missing: string[] = [];
+    if (!title.trim()) missing.push("Title");
+    if (!subTitle.trim()) missing.push("Sub Title");
+    if (!description.trim()) missing.push("Description");
+    if (!nutritionist.trim()) missing.push("Nutritionist");
 
-    // If creating, require image. If editing, image optional.
-    if (!article && !imageFile) {
-      toast.error("Image is required");
+    const hasImage = !!imageFile || !!imagePreview;
+    if (!hasImage) missing.push("Image");
+
+    if (missing.length > 0) {
+      const label = missing.length > 1 ? "fields are" : "field is";
+      toast.error(`${missing.join(", ")} ${label} required`);
       return;
     }
 
@@ -81,13 +108,11 @@ export default function ArticleForm({
     try {
       let res;
       if (article && (article._id || article.id)) {
-        // edit
         const id = article._id || article.id;
         res = await api.put(`/admin/article/${id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        // create
         res = await api.post("/admin/article", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -97,7 +122,6 @@ export default function ArticleForm({
         id: toastId,
       });
 
-      // clear only when creating
       if (!article) {
         setTitle("");
         setSubTitle("");
@@ -107,7 +131,6 @@ export default function ArticleForm({
         setImagePreview(null);
       }
 
-      // notify parent
       onSuccess?.(res?.data || res?.data?.addArticle || res?.data?.article);
 
       closeModal?.();
@@ -127,13 +150,15 @@ export default function ArticleForm({
     >
       {/* Image upload */}
       <div>
-        <label className="block font-medium mb-1">Image</label>
+        <label className="block font-medium mb-1">
+          Image <span className="text-red-500">*</span>
+        </label>
         <div className="flex  gap-1 items-center">
           {imagePreview && (
             <img
               src={imagePreview}
               alt="preview"
-              className="w-16 h-16 rounded object-cover border"
+              className="w-10 h-10 rounded object-cover border"
             />
           )}
           <input
@@ -148,7 +173,9 @@ export default function ArticleForm({
 
       {/* Title */}
       <div>
-        <label className="block font-medium mb-1">Title</label>
+        <label className="block font-medium mb-1">
+          Title <span className="text-red-500">*</span>
+        </label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -161,7 +188,9 @@ export default function ArticleForm({
 
       {/* SubTitle */}
       <div>
-        <label className="block font-medium mb-1">Sub Title</label>
+        <label className="block font-medium mb-1">
+          Sub Title <span className="text-red-500">*</span>
+        </label>
         <input
           value={subTitle}
           onChange={(e) => setSubTitle(e.target.value)}
@@ -174,7 +203,9 @@ export default function ArticleForm({
 
       {/* Description */}
       <div>
-        <label className="block font-medium mb-1">Description</label>
+        <label className="block font-medium mb-1">
+          Description <span className="text-red-500">*</span>
+        </label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -186,7 +217,9 @@ export default function ArticleForm({
 
       {/* Nutritionist */}
       <div>
-        <label className="block font-medium mb-1">Nutritionist</label>
+        <label className="block font-medium mb-1">
+          Nutritionist <span className="text-red-500">*</span>
+        </label>
         <input
           value={nutritionist}
           onChange={(e) => setNutritionist(e.target.value)}

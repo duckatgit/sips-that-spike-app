@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const origin = "http://localhost:5000";
+export const origin = "http://localhost:5000";
 const withSuffix = (path: string) => `${origin}${path}`;
 const api = axios.create({
   baseURL: withSuffix("/api"),
@@ -8,6 +8,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  config.headers = config.headers || {};
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

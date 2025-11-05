@@ -4,7 +4,7 @@ import "primeicons/primeicons.css";
 import { useState, useEffect } from "react";
 import DataGrid from "./ui/DataGrid";
 import ArticleForm from "./ui/ArticleForm";
-import api from "../API/backapi";
+import api, { origin } from "../API/backapi";
 import { toast } from "react-hot-toast";
 
 type Article = {
@@ -78,6 +78,7 @@ export default function Learn() {
       resData?.addArticle ||
       resData?.article ||
       (resData && resData._id ? resData : null);
+
     if (!newArticle) {
       fetchArticles(page, rowsPerPage);
       return;
@@ -142,7 +143,7 @@ export default function Learn() {
       sortable: false,
       render: (row: Article) => (
         <img
-          src={row.image ? `http://localhost:5000/uploads/${row.image}` : "https://picsum.photos/50"}
+          src={row.image ? `${origin}/uploads/${row.image}` : "https://picsum.photos/50"}
           alt="thumbnail"
           className="w-10 h-10 rounded object-cover"
         />
@@ -260,7 +261,7 @@ export default function Learn() {
           createButton={
             <button
               onClick={() => openModal("create", null)}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              className="bg-blue-600 text-white px-4 py-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500"
             >
               Create
             </button>

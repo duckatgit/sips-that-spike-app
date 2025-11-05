@@ -13,6 +13,8 @@ type AppContextType = {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   user?: any | null;
   setUser?: React.Dispatch<React.SetStateAction<any | null>>;
+  setForceFetch?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetStates?: () => void;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -20,10 +22,21 @@ const AppContext = createContext<AppContextType | null>(null);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any | null>(null);
+  const [forceFetch, setForceFetch] = useState(false);
   const nav = useNavigate();
+
+  const resetStates = () => {
+    setUser(null);
+    setSidebarOpen(false);
+  };
 
   useEffect(() => {
     const fetctMe = async () => {
+      if (localStorage.getItem("token") === null) {
+        nav("/login");
+        return;
+      }
+
       try {
         const resp = await api.get("/admin/me");
         const body = resp.data;
@@ -41,10 +54,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetctMe();
-  }, []);
+  }, [forceFetch]);
 
   return (
-    <AppContext.Provider value={{ sidebarOpen, setSidebarOpen, user, setUser }}>
+    <AppContext.Provider
+      value={{
+        sidebarOpen,
+        setSidebarOpen,
+        user,
+        setUser,
+        setForceFetch,
+        resetStates,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
