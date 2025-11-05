@@ -39,8 +39,26 @@ export default function Learn() {
       setLoading(true);
       const params: any = { page: p, limit };
       const res = await api.get("/admin/articles", { params });
-      const articles = res.data?.articles || res.data;
+      let articles = res.data?.articles || res.data;
       const totalCount = res.data?.total ?? (articles ? articles.length : 0);
+      
+      if (sortKey) {
+        articles = [...articles].sort((a: any, b: any) => {
+          const av = a[sortKey];
+          const bv = b[sortKey];
+
+          if (typeof av === "number" && typeof bv === "number") {
+            return sortAsc ? av - bv : bv - av;
+          }
+
+          if (typeof av === "string" && typeof bv === "string") {
+            return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+          }
+
+          return 0;
+        });
+      }
+
       setData(articles || []);
       setTotal(Number(totalCount) || 0);
     } catch (err: any) {
@@ -50,11 +68,13 @@ export default function Learn() {
     } finally {
       setLoading(false);
     }
-  }; 
-  
+  };
+
+  console.log(sortAsc, sortKey);
+
   useEffect(() => {
     fetchArticles(page, rowsPerPage);
-  }, [page, rowsPerPage, search]);
+  }, [page, rowsPerPage, search, sortKey, sortAsc]);
 
   const handleSort = (key: string) => {
     setSortKey(key);
@@ -143,7 +163,11 @@ export default function Learn() {
       sortable: false,
       render: (row: Article) => (
         <img
-          src={row.image ? `${origin}/uploads/${row.image}` : "https://picsum.photos/50"}
+          src={
+            row.image
+              ? `${origin}/uploads/${row.image}`
+              : "https://picsum.photos/50"
+          }
           alt="thumbnail"
           className="w-10 h-10 rounded object-cover"
         />
@@ -158,6 +182,7 @@ export default function Learn() {
     {
       key: "description",
       label: "Description",
+      sortable: true,
       render: (row: Article) => (
         <div className="relative group max-w-[160px] overflow-visible">
           <span className="font-semibold text-gray-800 truncate block">
