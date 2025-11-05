@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import toast from "react-hot-toast";
+import api from "../API/backapi";
 interface ILoginForm {
   email: string;
   password: string;
@@ -14,40 +16,28 @@ export const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>({ mode: "onChange" });
+
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async (data: ILoginForm) => {
-    // try {
-    //   const final = await Loginurl(data);
-    //   console.log("final", final.data);
-    //   // store token & user
-    //   localStorage.setItem("valid", JSON.stringify(final.data));
-    //   localStorage.setItem("token", final.data.token);
-    //   const user = final.data;
-    //   alert("Login successful!");
-    //   const properdata = {
-    //     isAuth: true,
-    //     role: user.role,
-    //     name: user.username,
-    //     userId:user.userId,
-    //   };
-    //   localStorage.setItem("isAuth", JSON.stringify(properdata));
-    //   localStorage.setItem("currentUser", JSON.stringify(user));
-    //   if (user.role === "admin") {
-    //     navigate("/dashboard");
-    //   } else {
-    //     navigate("/dashboard");
-    //   }
-    // } catch (error: any) {
-    //   // Axios errors for non-2xx responses go here
-    //   if (error.response) {
-    //     // Server responded with a status other than 2xx
-    //     alert(error.response.data.message || "Invalid email or password");
-    //   } else {
-    //     // Network error or something else
-    //     alert("Something went wrong. Please try again.");
-    //   }
-    // }
+    setLoading(true);
+    try {
+      const resp = await api.post("/admin/adminLogIn", data);
+      const body = resp.data;
+      if (body.token) {
+        localStorage.setItem("token", body.token);
+      }
+      toast.success(body.message || "Login successful");
+      navigate("/learn");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || err.message || "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,15 +100,16 @@ export const Login = () => {
           )}
         </div>
 
-        <div>
+        {/* <div>
           <a href="/forgetPassword">Forget Password</a>
-        </div>
+        </div> */}
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-indigo-600 hover:to-purple-600 transition"
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:from-indigo-600 hover:to-purple-600 transition disabled:opacity-60"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>

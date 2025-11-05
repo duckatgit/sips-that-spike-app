@@ -3,17 +3,22 @@ import { Header } from "./Header";
 import { AdminLayout } from "../components/AdminLayout";
 import Learn from "../components/Learn";
 import { Login } from "../pages/Login";
+import { AppProvider } from "@/context/appContext";
 export const Routing = () => {
   return (
     <div>
-      <Header />
+      <AppProvider>
+        <Header />
+      </AppProvider>
       <Routes>
         <Route
           path="/learn"
           element={
-            <AdminLayout>
-              <Learn />
-            </AdminLayout>
+            <AppProvider>
+              <AdminLayout>
+                <Learn />
+              </AdminLayout>
+            </AppProvider>
           }
         />
         <Route path="/login" element={<Login />} />
@@ -22,4 +27,3 @@ export const Routing = () => {
     </div>
   );
 };
-  
