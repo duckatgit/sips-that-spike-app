@@ -1,11 +1,11 @@
-import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { useState, useEffect } from "react";
-import DataGrid from "./ui/DataGrid";
-import ArticleForm from "./ui/ArticleForm";
-import api, { origin } from "../API/backapi";
+import "primereact/resources/primereact.min.css";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import api from "../API/backapi";
+import ArticleForm from "./ui/ArticleForm";
+import DataGrid from "./ui/DataGrid";
 
 type Article = {
   _id: string;
@@ -41,8 +41,8 @@ export default function Learn() {
       const res = await api.get("/admin/getAllArticle", { params });
       let articles = res.data?.getAllArticle?.articles || res.data;
       console.log(res);
-      
-      const totalCount =  res.data?.getAllArticle?.totalArticles
+
+      const totalCount = res.data?.getAllArticle?.totalArticles;
 
       if (sortKey) {
         articles = [...articles].sort((a: any, b: any) => {
@@ -82,7 +82,7 @@ export default function Learn() {
   };
 
   const openModal = async (mode: string, article?: any) => {
-    console.log(article,5555555555555555);
+    console.log(article, 5555555555555555);
 
     if (mode === "edit")
       try {
@@ -103,8 +103,7 @@ export default function Learn() {
         };
         article = { ...article, ...articleMetaData };
 
-        console.log(article),777777777777;
-
+        console.log(article), 777777777777;
       } catch (error) {
         toast.error("Failed to fetch article details");
         return;
@@ -122,9 +121,7 @@ export default function Learn() {
   };
 
   const handleSuccess = (resData: any) => {
-
-    console.log(resData,4544545454);
-    
+    console.log(resData, 4544545454);
 
     const newArticle =
       resData?.addArticle ||
@@ -185,7 +182,7 @@ export default function Learn() {
   const columns = [
     {
       key: "srno",
-      label: "Sr No",
+      label: "Sr. No",
       sortable: false,
       render: (_row: Article, idx: number) => <span>{idx + 1}</span>,
     },
@@ -195,11 +192,7 @@ export default function Learn() {
       sortable: false,
       render: (row: Article) => (
         <img
-          src={
-            row.image
-              ? `${row.image}`
-              : "https://picsum.photos/50"
-          }
+          src={row.image ? `${row.image}` : "https://picsum.photos/50"}
           alt="thumbnail"
           className="w-10 h-10 rounded object-cover"
         />
@@ -217,28 +210,16 @@ export default function Learn() {
       sortable: true,
       render: (row: Article) => (
         <div className="relative group max-w-[160px] overflow-visible">
-          <span className="font-semibold text-gray-800 truncate block">
-            {row.description || row.subTitle}
+          <span
+            className="font-semibold text-gray-800 truncate block"
+          >
+            {row.description}
           </span>
 
-          <div
-            className="
-        absolute left-0 bottom-full
-        hidden group-hover:block
-        bg-white text-black text-xs
-        rounded-lg px-3 py-2 shadow-lg z-50 border border-gray-200
-        max-w-[300px] whitespace-normal break-words
-      "
-          >
-            <div
-              className="
-          absolute top-full left-4
-          w-0 h-0 
-          border-l-4 border-r-4 border-t-4 
-          border-l-transparent border-r-transparent border-t-white
-        "
-            />
-            {row.description || row.subTitle}
+          <div className=" absolute left-0 bottom-full hidden group-hover:block bg-white text-black text-xs rounded-lg px-3 py-2 shadow-lg z-50 border border-gray-200 max-w-[300px] whitespace-normal h-[10dvh] overflow-y-scroll ">
+          
+            {/* <div className=" absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white " /> */}
+         {row.description}
           </div>
         </div>
       ),
@@ -274,21 +255,21 @@ export default function Learn() {
             className="p-1 rounded focus:outline-none bg-white hover:bg-white focus:bg-white border-none shadow-none"
             title="Delete"
           >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-7 w-7 text-red-600"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="5" y="7" width="10" height="9" rx="2" />
-                <path d="M8 10v4M12 10v4" />
-                <path d="M7 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                <line x1="4" y1="7" x2="16" y2="7" />
-              </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-7 w-7 text-red-600"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="5" y="7" width="10" height="9" rx="2" />
+              <path d="M8 10v4M12 10v4" />
+              <path d="M7 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              <line x1="4" y1="7" x2="16" y2="7" />
+            </svg>
           </button>
         </div>
       ),
@@ -320,7 +301,7 @@ export default function Learn() {
               onClick={() => openModal("create", null)}
               className="bg-blue-600 text-white px-4 py-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500"
             >
-              Create
+              Add Article
             </button>
           }
         />
@@ -353,7 +334,7 @@ export default function Learn() {
         {showDeleteConfirm && deleteTarget && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm relative">
-              <div className="text-lg font-semibold mb-2">Confirm delete</div>
+              <div className="text-lg font-semibold mb-2">Confirm Delete</div>
               <div className="mb-4">
                 Are you sure you want to delete "{deleteTarget.title}"?
               </div>

@@ -21,7 +21,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any | null>(null); //?should be null
+  const [user, setUser] = useState<any | null>(localStorage.getItem("email")); //?should be null
   const [forceFetch, setForceFetch] = useState(false);
   const nav = useNavigate();
 
@@ -53,8 +53,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    if(user === null  ){
-      nav("/login");  
+    if (user === null) {
+      nav("/login");
     }
 
     // fetctMe();

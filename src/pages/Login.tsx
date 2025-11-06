@@ -60,7 +60,7 @@ export const Login = () => {
 
   return (
     <div className="h-[100dvh] flex justify-center items-center ">
-      <div className="max-w-md   mt-10 p-8 bg-white shadow-2xl rounded-2xl border border-gray-200">
+      <div className="  w-[400px] mt-10 p-8 bg-white shadow-2xl rounded-2xl border border-gray-200">
         <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-900 tracking-tight">
           Login
         </h2>
@@ -73,6 +73,7 @@ export const Login = () => {
             </label>
             <input
               type="email"
+              placeholder="enter email"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -82,48 +83,61 @@ export const Login = () => {
               })}
               className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
+
+            {/* reserved height */}
+            <div className="h-5">
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
+          {/* Password */}
           <div className="relative">
             <label className="block mb-1 font-medium text-gray-700">
               Password
             </label>
             <input
               type={showPassword ? "text" : "password"}
+              placeholder="enter password"
               {...register("password", {
                 required: "Password is required",
-                minLength: { value: 6, message: "Min 6 characters" },
+                minLength: {
+                  value: 6,
+                  message: "Minimum 6 characters",
+                },
+                maxLength: {
+                  value: 40,
+                  message: "Too long",
+                },
                 pattern: {
+                  // uppercase + number + special character
                   value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
-                  message:
-                    "Include uppercase letter, number, and special character",
+                  message: `Include uppercase, number and special character`,
                 },
               })}
               className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none transition pr-10"
             />
+
             <span
               className="absolute right-3 top-9 cursor-pointer text-gray-500"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
-                <FontAwesomeIcon icon={faEye} style={{ color: "#0c0d0e" }} />
+                <FontAwesomeIcon icon={faEye} />
               ) : (
-                <FontAwesomeIcon
-                  icon={faEyeSlash}
-                  style={{ color: "#0c0d0e" }}
-                />
+                <FontAwesomeIcon icon={faEyeSlash} />
               )}
             </span>
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
+
+            {/* reserved height */}
+            <div className="h-5">
+              {errors.password && (
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* <div>

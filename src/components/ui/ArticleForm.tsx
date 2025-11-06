@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { UploadCloud, X } from "lucide-react";
 import { useEffect, useState, type KeyboardEvent } from "react";
 import { toast } from "react-hot-toast";
 import api from "../../API/backapi";
@@ -65,8 +65,11 @@ export default function ArticleForm({
   const [hiddenSugarNames, setHiddenSugarNames] = useState<string[]>(
     article?.hiddenSugarNames || []
   );
+
   const [sugarInput, setSugarInput] = useState("");
+
   const [emptyFields, setEmptyFields] = useState<Set<string>>(new Set());
+  console.log(emptyFields);
 
   useEffect(() => {
     if (article?.image) {
@@ -240,7 +243,7 @@ export default function ArticleForm({
     if (missing.length > 0) {
       setEmptyFields(newEmptyFields);
       const label = missing.length > 1 ? "fields are" : "field is";
-      toast.error(`${missing.join(", ")} ${label} required`);
+      // toast.error(`${missing.join(", ")} ${label} required`);
       return;
     }
 
@@ -349,14 +352,18 @@ export default function ArticleForm({
         <label className="block font-medium mb-1">
           Image <span className="text-red-500">*</span>
         </label>
-        <div className="flex  gap-1 items-center">
-          {imagePreview && (
+
+        <div className="flex gap-2 items-center">
+          {imagePreview ? (
             <img
               src={imagePreview}
               alt="preview"
               className="w-10 h-10 rounded object-cover border"
             />
+          ) : (
+            <UploadCloud className="w-6 h-6 text-gray-500" />
           )}
+
           <input
             type="file"
             accept="image/*"
@@ -364,6 +371,10 @@ export default function ArticleForm({
             className="w-full text-sm"
             disabled={loading}
           />
+        </div>
+
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("image") && "Image cannot be empty"}
         </div>
       </div>
 
@@ -376,7 +387,7 @@ export default function ArticleForm({
           value={title}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -389,6 +400,9 @@ export default function ArticleForm({
           className={getInputClassName("title")}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("title") && "Title cannot be empty"}
+        </div>
       </div>
 
       {/* SubTitle */}
@@ -400,7 +414,7 @@ export default function ArticleForm({
           value={subTitle}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -413,6 +427,9 @@ export default function ArticleForm({
           className={getInputClassName("subTitle")}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("subTitle") && "Sub title cannot be empty"}
+        </div>
       </div>
 
       {/* Description */}
@@ -424,7 +441,7 @@ export default function ArticleForm({
           value={description}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -438,6 +455,9 @@ export default function ArticleForm({
           )} min-h-[90px] resize-none`}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("description") && "Description cannot be empty"}
+        </div>
       </div>
 
       {/* Nutritionist */}
@@ -449,7 +469,7 @@ export default function ArticleForm({
           value={nutritionist}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -462,6 +482,9 @@ export default function ArticleForm({
           className={getInputClassName("nutritionist")}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("nutritionist") && "Nutritionist cannot be empty"}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-6">
@@ -478,6 +501,10 @@ export default function ArticleForm({
             className={getInputClassName("totalCarbohydrates")}
             disabled={loading}
           />
+          <div className="text-[10px] text-red-500">
+            {emptyFields.has("totalCarbohydrates") &&
+              "Carbohydrates cannot be empty"}
+          </div>
         </div>
 
         {/* Total Sugars */}
@@ -493,6 +520,10 @@ export default function ArticleForm({
             className={getInputClassName("totalSugars")}
             disabled={loading}
           />
+          <div className="text-[10px] text-red-500">
+            {emptyFields.has("totalSugars") &&
+              "Total Sugar field can't be empty"}
+          </div>
         </div>
 
         {/* Added Sugars */}
@@ -508,6 +539,10 @@ export default function ArticleForm({
             className={getInputClassName("addedSugars")}
             disabled={loading}
           />
+          <div className="text-[10px] text-red-500">
+            {emptyFields.has("addedSugars") &&
+              "Added Sugar field can't be empty"}
+          </div>
         </div>
 
         {/* Serving Size */}
@@ -523,6 +558,10 @@ export default function ArticleForm({
             className={getInputClassName("servingSize")}
             disabled={loading}
           />
+          <div className="text-[10px] text-red-500">
+            {emptyFields.has("servingSize") &&
+              "Serving Size field can't be empty"}
+          </div>
         </div>
       </div>
 
@@ -535,7 +574,7 @@ export default function ArticleForm({
           value={sugarInput}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -549,6 +588,10 @@ export default function ArticleForm({
           className={getInputClassName("hiddenSugarNames")}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("hiddenSugarNames") &&
+            "Hidden Sugar field can't be empty"}
+        </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {hiddenSugarNames.map((sugar, index) => (
             <div
@@ -573,14 +616,18 @@ export default function ArticleForm({
         <label className="block font-medium mb-1">
           Secondary Image <span className="text-red-500">*</span>
         </label>
-        <div className="flex gap-1 items-center">
-          {secondaryImagePreview && (
+
+        <div className="flex gap-2 items-center">
+          {secondaryImagePreview ? (
             <img
               src={secondaryImagePreview}
               alt="secondary preview"
               className="w-10 h-10 rounded object-cover border"
             />
+          ) : (
+            <UploadCloud className="w-6 h-6 text-gray-500" />
           )}
+
           <input
             type="file"
             accept="image/*"
@@ -588,6 +635,11 @@ export default function ArticleForm({
             className="w-full text-sm"
             disabled={loading}
           />
+        </div>
+
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("secondaryImage") &&
+            "Secondary Image field can't be empty"}
         </div>
       </div>
 
@@ -600,7 +652,7 @@ export default function ArticleForm({
           value={secondaryDescription}
           onChange={(e) => {
             const value = e.target.value;
-            const reg = /^[A-Za-z ]*$/;
+            const reg = /^[^0-9]*$/;
 
             if (!reg.test(value)) {
               return;
@@ -614,6 +666,10 @@ export default function ArticleForm({
           )} min-h-[90px] resize-none`}
           disabled={loading}
         />
+        <div className="text-[10px] text-red-500">
+          {emptyFields.has("secondaryDescription") &&
+            "Secondary Description Image field can't be empty"}
+        </div>
       </div>
 
       {/* Submit */}
