@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const origin = "http://localhost:5000";
+export const origin = import.meta.env.VITE_BASE_URL;
 const withSuffix = (path: string) => `${origin}${path}`;
 const api = axios.create({
   baseURL: withSuffix("/api"),

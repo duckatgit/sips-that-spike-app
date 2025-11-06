@@ -50,7 +50,7 @@ export const Header = () => {
                 </div> */}
                 <div className="p-1">
                   <button
-                    onClick={handleLogout}
+                    // onClick={handleLogout}
                     className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 flex items-center gap-2 rounded transition-colors"
                   >
                     <LogOut size={16} />
