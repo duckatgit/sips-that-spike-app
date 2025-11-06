@@ -42,22 +42,17 @@ export const Header = () => {
                   <User size={18} />
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-48 p-0 bg-gray-900 border border-gray-700">
-                {/* <div className="px-4 py-3 border-b border-gray-700">
-                  <p className="text-sm font-medium text-gray-200">
-                    {authentication ? isAuth.role : "Guest"}
-                  </p>
-                </div> */}
+              {/* <PopoverContent className="w-48 p-0 bg-gray-900 border border-gray-700">
+              
                 <div className="p-1">
                   <button
-                    // onClick={handleLogout}
                     className="w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 flex items-center gap-2 rounded transition-colors"
                   >
                     <LogOut size={16} />
                     Logout
                   </button>
                 </div>
-              </PopoverContent>
+              </PopoverContent> */}
             </Popover>
             <header className="md:hidden flex items-center justify-between p-3">
               <button

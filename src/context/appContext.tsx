@@ -21,7 +21,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any | null>({}); //?should be null
+  const [user, setUser] = useState<any | null>(null); //?should be null
   const [forceFetch, setForceFetch] = useState(false);
   const nav = useNavigate();
 
@@ -52,6 +52,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         console.log(error);
       }
     };
+
+    if(user === null  ){
+      nav("/login");  
+    }
 
     // fetctMe();
   }, [forceFetch]);

@@ -97,7 +97,7 @@ console.log(data);
 
   return (
     <>
-      <div className=" h-full">
+      <div className=" h-[100%] relative">
         <div className="flex flex-col p-4 sticky top-0 bg-[white] z-10 sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
           {title && (
             <>
@@ -178,6 +178,7 @@ console.log(data);
                   onSearch(e.target.value);
                   onPage(1);
                 }}
+                disabled
                 onKeyDown={(e) => {
                   if (e.key === " " && !search) {
                     e.preventDefault();
@@ -203,7 +204,7 @@ console.log(data);
             {actionButton && <>{actionButton}</>}
           </div>
         </div>
-        <div className="w-full overflow-x-auto px-4 min-h-[445px]">
+        <div className="w-full overflow-x-auto px-4 ">
           <table className="min-w-full bg-white">
             <thead className="bg-white">
               <tr>
@@ -277,8 +278,8 @@ console.log(data);
             </tbody>
           </table>
         </div>
-        <div className="p-4 sticky bottom-[-0.2px] bg-[white] z-10 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center whitespace-nowrap gap-2">
+        <div className="p-4 w-full absolute bottom-0  bg-[white] z-10 flex flex-col sm:flex-row items-stretch  justify-between gap-2">
+          <div className="flex items-center  whitespace-nowrap gap-2">
             <label className="mr-2 text-xs sm:text-sm text-gray-600">
               Rows per page:
             </label>

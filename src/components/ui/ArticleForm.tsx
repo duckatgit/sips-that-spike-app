@@ -1,7 +1,7 @@
-import { useState, useEffect, type KeyboardEvent } from "react";
-import api, { origin } from "../../API/backapi";
-import { toast } from "react-hot-toast";
 import { X } from "lucide-react";
+import { useEffect, useState, type KeyboardEvent } from "react";
+import { toast } from "react-hot-toast";
+import api from "../../API/backapi";
 
 type Props = {
   openModal?: () => void;
@@ -279,19 +279,23 @@ export default function ArticleForm({
           }
         );
 
-        await api.put(
+        const metaRes = await api.put(
           `/admin/updateKeyNumber/?keyNumberId=${article.keyNumberId}`,
           metaFormData,
           {
             headers: { "Content-Type": "multipart/form-data" },
           }
         );
+
+        console.log(metaRes, 46565656);
       } else {
         res = await api.post("/admin/addArticle", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        const articleId = res?.data?.addArticle?.id;
+        console.log(res, 9999999999);
+
+        const articleId = res?.data?.article?.id;
         metaFormData.append("articleId", articleId);
 
         await api.post("/admin/addKeyNumber", metaFormData, {
@@ -320,6 +324,7 @@ export default function ArticleForm({
         setHiddenSugarNames([]);
         setSugarInput("");
       }
+      console.log(res, 87878787878);
 
       onSuccess?.(res?.data || res?.data?.addArticle || res?.data?.article);
 
@@ -327,8 +332,7 @@ export default function ArticleForm({
     } catch (err: any) {
       console.log(err.response.data.message);
 
-      const message =
-        err?.response?.data?.message ?? "Request failed"
+      const message = err?.response?.data?.message ?? "Request failed";
       toast.error(message, { id: toastId });
     } finally {
       setLoading(false);
@@ -370,7 +374,16 @@ export default function ArticleForm({
         </label>
         <input
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setTitle(value);
+          }}
           type="text"
           placeholder="Enter title"
           className={getInputClassName("title")}
@@ -385,7 +398,16 @@ export default function ArticleForm({
         </label>
         <input
           value={subTitle}
-          onChange={(e) => setSubTitle(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setSubTitle(value);
+          }}
           type="text"
           placeholder="Enter sub title"
           className={getInputClassName("subTitle")}
@@ -400,7 +422,16 @@ export default function ArticleForm({
         </label>
         <textarea
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setDescription(value);
+          }}
           placeholder="Short description"
           className={`${getInputClassName(
             "description"
@@ -416,7 +447,16 @@ export default function ArticleForm({
         </label>
         <input
           value={nutritionist}
-          onChange={(e) => setNutritionist(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setNutritionist(value);
+          }}
           type="text"
           placeholder="Enter nutritionist name"
           className={getInputClassName("nutritionist")}
@@ -493,7 +533,16 @@ export default function ArticleForm({
         </label>
         <input
           value={sugarInput}
-          onChange={(e) => setSugarInput(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setSugarInput(value);
+          }}
           onKeyDown={handleSugarNameInput}
           type="text"
           placeholder="Type and press Enter to add hidden sugar names"
@@ -549,7 +598,16 @@ export default function ArticleForm({
         </label>
         <textarea
           value={secondaryDescription}
-          onChange={(e) => setSecondaryDescription(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            const reg = /^[A-Za-z ]*$/;
+
+            if (!reg.test(value)) {
+              return;
+            }
+
+            setSecondaryDescription(value);
+          }}
           placeholder="Enter secondary description"
           className={`${getInputClassName(
             "secondaryDescription"

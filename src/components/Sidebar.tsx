@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, HelpCircle } from "lucide-react";
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -10,6 +10,7 @@ export const Sidebar = ({ onNavigate }: SidebarProps) => {
 
   const links = [
     { name: "Learn", path: "/learn", icon: <BookOpen size={20} /> },
+    // { name: "Faq", path: "/faq", icon: <HelpCircle  size={20} /> },
   ];
 
   return (

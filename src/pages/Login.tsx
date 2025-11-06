@@ -1,11 +1,9 @@
+import { useAppContext } from "@/context/appContext";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import toast from "react-hot-toast";
-import api from "../API/backapi";
-import { useAppContext } from "@/context/appContext";
 interface ILoginForm {
   email: string;
   password: string;
@@ -18,9 +16,9 @@ export const Login = () => {
     formState: { errors },
   } = useForm<ILoginForm>({ mode: "onChange" });
 
-  const { user,setForceFetch } = useAppContext();
+  const { user, setForceFetch, setUser } = useAppContext();
   const nav = useNavigate();
-  
+
   useEffect(() => {
     console.log(user);
 
@@ -34,23 +32,30 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: ILoginForm) => {
-    setLoading(true);
-    try {
-      const resp = await api.post("/admin/adminLogIn", data);
-      const body = resp.data;
-      if (body.token) {
-        localStorage.setItem("token", body.token);
-        setForceFetch && setForceFetch((prev) => !prev);
-      }
-      toast.success(body.message || "Login successful");
-      navigate("/learn");
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err.message || "Login failed"
-      );
-    } finally {
-      setLoading(false);
-    }
+    console.log(data);
+
+    localStorage.setItem("email", data.email);
+    localStorage.setItem("password", data.password);
+
+    setUser?.(data);
+
+    // setLoading(true);
+    // try {
+    //   const resp = await api.post("/admin/adminLogIn", data);
+    //   const body = resp.data;
+    //   if (body.token) {
+    //     localStorage.setItem("token", body.token);
+    //     setForceFetch && setForceFetch((prev) => !prev);
+    //   }
+    //   toast.success(body.message || "Login successful");
+    //   navigate("/learn");
+    // } catch (err: any) {
+    //   toast.error(
+    //     err?.response?.data?.message || err.message || "Login failed"
+    //   );
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (

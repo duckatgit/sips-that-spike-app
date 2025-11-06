@@ -39,10 +39,10 @@ export default function Learn() {
       setLoading(true);
       const params: any = { page: p, limit };
       const res = await api.get("/admin/getAllArticle", { params });
-      let articles = res.data?.responseData?.updatedArticles || res.data;
+      let articles = res.data?.getAllArticle?.articles || res.data;
       console.log(res);
       
-      const totalCount =  res.data?.responseData?.totalArticles
+      const totalCount =  res.data?.getAllArticle?.totalArticles
 
       if (sortKey) {
         articles = [...articles].sort((a: any, b: any) => {
@@ -90,7 +90,7 @@ export default function Learn() {
           `/admin/getArticleById/?articleId=${article?._id}`
         );
         console.log(res);
-        const data = res.data?.updatedArticle?.keyNumbers?.[0] ?? {};
+        const data = res.data?.article?.keyNumbers?.[0] ?? {};
         const articleMetaData = {
           totalCarbohydrates: data.totalCarbohydrates,
           addedSugars: data.addedSugars,
@@ -122,6 +122,10 @@ export default function Learn() {
   };
 
   const handleSuccess = (resData: any) => {
+
+    console.log(resData,4544545454);
+    
+
     const newArticle =
       resData?.addArticle ||
       resData?.article ||
@@ -270,21 +274,21 @@ export default function Learn() {
             className="p-1 rounded focus:outline-none bg-white hover:bg-white focus:bg-white border-none shadow-none"
             title="Delete"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-7 w-7 text-red-600"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="5" y="7" width="10" height="9" rx="2" />
-              <path d="M8 10v4M12 10v4" />
-              <path d="M7 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-              <line x1="4" y1="7" x2="16" y2="7" />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7 text-red-600"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="5" y="7" width="10" height="9" rx="2" />
+                <path d="M8 10v4M12 10v4" />
+                <path d="M7 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                <line x1="4" y1="7" x2="16" y2="7" />
+              </svg>
           </button>
         </div>
       ),
@@ -293,7 +297,7 @@ export default function Learn() {
 
   return (
     <>
-      <div className="">
+      <div className="h-[100%]">
         <DataGrid
           columns={columns}
           data={data}
