@@ -39,10 +39,10 @@ export default function Learn() {
       setLoading(true);
       const params: any = { page: p, limit };
       const res = await api.get("/admin/getAllArticle", { params });
-      let articles = res.data?.getAllArticle?.articles || res.data;
+      let articles = res.data?.responseData?.updatedArticles || res.data;
       console.log(res);
       
-      const totalCount =  res.data?.getAllArticle?.totalArticles
+      const totalCount =  res.data?.responseData?.totalArticles
 
       if (sortKey) {
         articles = [...articles].sort((a: any, b: any) => {
@@ -82,7 +82,7 @@ export default function Learn() {
   };
 
   const openModal = async (mode: string, article?: any) => {
-    console.log(article);
+    console.log(article,5555555555555555);
 
     if (mode === "edit")
       try {
@@ -90,7 +90,7 @@ export default function Learn() {
           `/admin/getArticleById/?articleId=${article?._id}`
         );
         console.log(res);
-        const data = res.data?.article?.keyNumbers?.[0] ?? {};
+        const data = res.data?.updatedArticle?.keyNumbers?.[0] ?? {};
         const articleMetaData = {
           totalCarbohydrates: data.totalCarbohydrates,
           addedSugars: data.addedSugars,
@@ -101,7 +101,10 @@ export default function Learn() {
           secondaryImage: data.image,
           keyNumberId: data._id,
         };
-        article = { ...res.data.article, ...articleMetaData };
+        article = { ...article, ...articleMetaData };
+
+        console.log(article),777777777777;
+
       } catch (error) {
         toast.error("Failed to fetch article details");
         return;
@@ -190,7 +193,7 @@ export default function Learn() {
         <img
           src={
             row.image
-              ? `${origin}/uploads/${row.image}`
+              ? `${row.image}`
               : "https://picsum.photos/50"
           }
           alt="thumbnail"
@@ -321,7 +324,7 @@ export default function Learn() {
         {/* Modal for create/edit */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white h-[90%] overflow-y-scroll rounded-xl shadow-lg p-6 w-full max-w-lg relative">
+            <div className="bg-white h-[90%] overflow-y-auto rounded-xl shadow-lg p-6 w-full max-w-lg relative">
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"

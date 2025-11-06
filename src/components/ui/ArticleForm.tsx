@@ -70,10 +70,10 @@ export default function ArticleForm({
 
   useEffect(() => {
     if (article?.image) {
-      setImagePreview(`${origin}/uploads/${article.image}`);
+      setImagePreview(`${article.image}`);
     }
     if (article?.secondaryImage) {
-      setSecondaryImagePreview(`${origin}/uploads/${article.secondaryImage}`);
+      setSecondaryImagePreview(`${article.secondaryImage}`);
     }
   }, [article]);
 
@@ -325,11 +325,10 @@ export default function ArticleForm({
 
       closeModal?.();
     } catch (err: any) {
-      console.log(err);
+      console.log(err.response.data.message);
 
       const message =
-        err?.response?.data?.message ||
-        article ? "Failed to update article" :"Failed to add article";
+        err?.response?.data?.message ?? "Request failed"
       toast.error(message, { id: toastId });
     } finally {
       setLoading(false);

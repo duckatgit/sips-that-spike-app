@@ -93,6 +93,7 @@ function DataGrid<T extends object>({
       setIsArchiveActive(false);
     }
   }, [location.pathname]);
+console.log(data);
 
   return (
     <>
@@ -168,7 +169,7 @@ function DataGrid<T extends object>({
             )}
             {/* <div className="relative w-full sm:w-64"> */}
             <div className="relative flex gap-8 w-full">
-              <input
+              {/* <input
                 type="text"
                 placeholder={"Search"}
                 className="border border-gray-300 rounded px-3 py-2 text-xs sm:text-sm w-full focus:outline-none focus:ring focus:border-blue-300 pr-8"
@@ -182,7 +183,7 @@ function DataGrid<T extends object>({
                     e.preventDefault();
                   }
                 }}
-              />
+              /> */}
               {search && (
                 <a
                   onClick={() => {
@@ -232,7 +233,7 @@ function DataGrid<T extends object>({
                     Loading...
                   </td>
                 </tr>
-              ) : data.length === 0 ? (
+              ) : data.length == 0 ? (
                 <tr>
                   <td
                     colSpan={columns.length}
@@ -242,7 +243,7 @@ function DataGrid<T extends object>({
                   </td>
                 </tr>
               ) : (
-                data.map((row, rowIndex) => (
+               data?.map((row, rowIndex) => (
                   <tr
                     key={rowIndex}
                     className="border-b hover:bg-gray-50 transition"
