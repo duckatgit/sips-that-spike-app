@@ -38,10 +38,12 @@ export default function Learn() {
     try {
       setLoading(true);
       const params: any = { page: p, limit };
-      const res = await api.get("/admin/articles", { params });
-      let articles = res.data?.articles || res.data;
-      const totalCount = res.data?.total ?? (articles ? articles.length : 0);
+      const res = await api.get("/admin/getAllArticle", { params });
+      let articles = res.data?.getAllArticle?.articles || res.data;
+      console.log(res);
       
+      const totalCount =  res.data?.getAllArticle?.totalArticles
+
       if (sortKey) {
         articles = [...articles].sort((a: any, b: any) => {
           const av = a[sortKey];
@@ -70,8 +72,6 @@ export default function Learn() {
     }
   };
 
-  console.log(sortAsc, sortKey);
-
   useEffect(() => {
     fetchArticles(page, rowsPerPage);
   }, [page, rowsPerPage, search, sortKey, sortAsc]);
@@ -81,7 +81,32 @@ export default function Learn() {
     setSortAsc((prev) => !prev);
   };
 
-  const openModal = (mode: string, article?: any) => {
+  const openModal = async (mode: string, article?: any) => {
+    console.log(article);
+
+    if (mode === "edit")
+      try {
+        let res = await api.get(
+          `/admin/getArticleById/?articleId=${article?._id}`
+        );
+        console.log(res);
+        const data = res.data?.article?.keyNumbers?.[0] ?? {};
+        const articleMetaData = {
+          totalCarbohydrates: data.totalCarbohydrates,
+          addedSugars: data.addedSugars,
+          totalSugars: data.totalSugars,
+          servingSize: data.servingSize,
+          secondaryDescription: data.description,
+          hiddenSugarNames: data.hiddenSugarNames,
+          secondaryImage: data.image,
+          keyNumberId: data._id,
+        };
+        article = { ...res.data.article, ...articleMetaData };
+      } catch (error) {
+        toast.error("Failed to fetch article details");
+        return;
+      }
+
     const normalizedMode = mode === "edit" ? "edit" : "create";
     setModalMode(normalizedMode as "create" | "edit");
     setSelectedArticle(article || null);
@@ -132,7 +157,7 @@ export default function Learn() {
     if (!deleteTarget) return;
     const id = deleteTarget._id;
     try {
-      await api.delete(`/admin/article/${id}`);
+      await api.delete(`/admin/deleteArticle/?articleId=${id}`);
       toast.success("Article deleted");
       const totalAfter = Math.max(0, total - 1);
       const totalPagesAfter = Math.max(1, Math.ceil(totalAfter / rowsPerPage));
@@ -296,7 +321,7 @@ export default function Learn() {
         {/* Modal for create/edit */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative">
+            <div className="bg-white h-[90%] overflow-y-scroll rounded-xl shadow-lg p-6 w-full max-w-lg relative">
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -316,6 +341,7 @@ export default function Learn() {
             </div>
           </div>
         )}
+
         {/* Delete confirm modal */}
         {showDeleteConfirm && deleteTarget && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
