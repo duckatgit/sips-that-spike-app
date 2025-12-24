@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React, { useLayoutEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
+import React, { useLayoutEffect } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Help() {
   const navigation = useNavigation();

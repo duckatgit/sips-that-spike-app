@@ -1,28 +1,26 @@
 
-import React, { useCallback, useEffect, useState } from "react";
+import SignoutPopup from "@/components/SignoutPopup";
+import { getAllScansDataByUsers, getuserbyid } from "@/service/Api";
+import { useToast } from "@/utils/useToastHook";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Entypo from "@expo/vector-icons/Entypo";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
-  Alert,
-  ActivityIndicator,
+  Text,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScaledSheet } from "react-native-size-matters";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Entypo from "@expo/vector-icons/Entypo";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { router, useFocusEffect } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getAllScansDataByUsers } from "@/service/Api";
-import { getuserbyid } from "@/service/Api";
-import { useToast } from "@/utils/useToastHook";
-import SignoutPopup from "@/components/SignoutPopup";
 interface UserData {
   name: string;
   email: string;
@@ -80,7 +78,7 @@ const showToastNotification = (type: string, msg: string) => {
     try {
       setProfileLoading(true);
 
-      let response = await getuserbyid();
+      let response:any = await getuserbyid();
       const user = response?.data?.getUserById;
     let res=await getAllScansDataByUsers();
     console.log("res data of alluser",res);
@@ -322,7 +320,7 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
   <View style={styles.nine}>
     <View style={styles.eight}>
       <Text>Healthy choice</Text>
-      <Text>{healthyChoice}/{allScansData.totalScans}</Text>
+      <Text>{healthyChoice && allScansData.totalScans?healthyChoice/allScansData.totalScans:''}</Text>
     </View>
 
     {/* Dynamic Progress Bar */}

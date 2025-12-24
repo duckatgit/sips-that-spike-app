@@ -2,7 +2,8 @@ import { Redirect } from "expo-router";
 export default function Index() {
   return <>
     <Redirect href="/splashscreen" />
-    
+        {/* <Redirect href="./../components/splashscreen" /> */}
+        {/* <Redirect href="../components/splashscreen" />   */}
     </>
   
 }

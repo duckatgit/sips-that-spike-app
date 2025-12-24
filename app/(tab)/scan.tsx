@@ -1,36 +1,29 @@
 
 
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Keyboard,
-  Modal,
-  TouchableWithoutFeedback,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
-import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScaledSheet } from "react-native-size-matters";
+import { addProductByManually } from "@/service/Api";
+import { useToast } from "@/utils/useToastHook";
+import { EvilIcons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
-import { EvilIcons } from "@expo/vector-icons";
-import Entypo from "@expo/vector-icons/Entypo";
-import * as ImagePicker from "expo-image-picker";
-import { addProductByManually } from "@/service/Api";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as ImagePicker from "expo-image-picker";
 import { router, useFocusEffect } from "expo-router";
-import { useToast } from "@/utils/useToastHook";
+import React, { useCallback, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { z } from "zod";
+import { styles } from "./scan.styles";
 const Theme = {
   color: {
     primaryColor: "#F63E4C",
@@ -51,18 +44,38 @@ const formSchema = z.object({
   drinkName: z
     .string()
     .nonempty("Drink Name is required")
-    .refine((val) => /^[A-Za-z\s]+$/.test(val), {
-      message: "Enter a valid drink name",
-    }),
+    // .refine((val) => /^[A-Za-z\s]+$/.test(val), {
+    //   message: "Enter a valid drink name",
+    // })
+     .min(1, "Minimum 1 characters required")
+        .max(40, "Maximum 40 characters allowed")
+        .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+        .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
+        .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
 
   brand: z
     .string()
     .nonempty("Brand is required")
-    .refine((val) => /^[A-Za-z0-9\s]+$/.test(val), {
-      message: "Enter a valid brand name",
-    }),
+    // .refine((val) => /^[A-Za-z0-9\s]+$/.test(val), {
+    //   message: "Enter a valid brand name",
+    // })
+    .min(1, "Minimum 1 characters required")
+        .max(40, "Maximum 40 characters allowed")
+        .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+        .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
+        .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed")
+    
+    ,
 
-  category: z.string().nonempty("Category is required"),
+
+  category: z.string().nonempty("Category is required")
+.min(1, "Minimum 1 characters required")
+        .max(40, "Maximum 40 characters allowed")
+        .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+        .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
+        .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+
+  
 
   sugar: z
   .string()
@@ -113,7 +126,7 @@ const { showToast } = useToast();
     reset,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors ,isValid  },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -291,7 +304,7 @@ console.log("loading",loading);
               <AntDesign
                 name="scan"
                 size={14}
-                color={activeButton === "drink" ? "#fff" : "#636363"}
+                color={activeButton === "drink" ? "#fff" : "#960909ff"}
               />
               <Text
                 style={[
@@ -430,8 +443,9 @@ console.log("loading",loading);
               <TouchableOpacity
   style={[
     styles.submitBtn,
+  { opacity: isValid ? 1 : 0.6 }
   ]}
-
+  disabled={!isValid }
   onPress={handleSubmit(onSubmit)}
 >
   {loading ? (
@@ -501,217 +515,4 @@ const Input = ({ ...props }: any) => (
 
 
 
-const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: "10@ms",
-  },
 
-  /* ---------------- SCAN BUTTON WRAPPER ---------------- */
-  scannerButtonWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    marginHorizontal: "10@ms",
-    marginTop: "20@ms",
-    backgroundColor: "#FFF6F1",
-    borderWidth: 2,
-    borderColor: "#FFEBDF",
-    borderRadius: "50@ms",
-    padding: "4@ms",
-    transform: [{ translateY: -4 }],
-
-    /* iOS Shadow */
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-
-    /* Android Shadow */
-    elevation: 8,
-  },
-
-  scanButton: {
-    width: "160@ms",
-    height: "40@ms",
-    borderRadius: "50@ms",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    backgroundColor: "#FFF6F1",
-  },
-
-  scanButtonActive: {
-    backgroundColor: Theme.color.primaryColor,
-  },
-
-  scanButtonText: {
-    fontSize: "10@ms",
-    fontWeight: "500",
-    fontFamily: "Poppins_500Medium",
-  },
-
-  /* ---------------- MAIN BODY ---------------- */
-  main: {
-    flex: 1,
-    alignItems: "center",
-    padding: "10@ms",
-  },
-
-  manual: {
-    width: "100%",
-    height: "60@ms",
-  },
-
-  manualText: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: "20@ms",
-    color: "#1B1919",
-  },
-
-  manualsub: {
-    fontFamily: "Poppins_400Regular",
-    fontSize: "14@ms",
-    color: "#615253",
-  },
-
-  /* ---------------- IMAGE / SCAN BOX ---------------- */
-  second: {
-    marginTop: "30@ms",
-    width: "147@ms",
-    height: "147@ms",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  third: {
-    width: "147@ms",
-    height: "147@ms",
-    borderWidth: 2,
-    borderColor: "#E6E6FF",
-    borderRadius: "100@ms",
-    backgroundColor: "#F8F8FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  /* ---------------- INPUT FIELDS ---------------- */
-  label: {
-    marginTop: "10@ms",
-    marginBottom: "5@ms",
-    fontSize: "14@ms",
-    fontFamily: "Poppins_600SemiBold",
-    color: "#000",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#C7C7C7",
-    borderRadius: "10@ms",
-    paddingVertical: "12@ms",
-    paddingHorizontal: "12@ms",
-    marginBottom: "5@ms",
-    backgroundColor: "#fff",
-    fontSize: "14@ms",
-  },
-
-  /* ---------------- DROPDOWN ---------------- */
-  dropdown: {
-    backgroundColor: "#fff",
-    borderRadius: "10@ms",
-    elevation: 4,
-    marginBottom: "10@ms",
-    marginTop: "-5@ms",
-    overflow: "hidden",
-  },
-
-  dropdownItem: {
-    padding: "12@ms",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-
-  error: {
-    color: "#F03745",
-    fontSize: "12@ms",
-    marginTop: "2@ms",
-    fontFamily: "Poppins_500Medium",
-  },
-
-  /* ---------------- SUBMIT BUTTON ---------------- */
-  submitBtn: {
-  width: "100%",
-  paddingVertical: "14@ms",
-  borderRadius: "50@ms",
-  backgroundColor: "#fff",
-  justifyContent: "center",
-  alignItems: "center",
-  marginTop: "25@ms",
-  borderColor:"#F63E4C",
-borderWidth:1,
-  // iOS shadow
-  // shadowColor: "#000",
-  // shadowOffset: { width: 0, height: 4 },
-  // shadowOpacity: 0.15,
-  // shadowRadius: 8,
-
-  // Android
-  // elevation: 5,
-},
-
-submitBtnText: {
-  color: "#F63E4C",
-  fontSize: "18@ms",
-  fontFamily: "Poppins_600SemiBold",
-},
-
-
-  /* ---------------- BOTTOM SHEET ---------------- */
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-
-  bottomSheet: {
-    width: "100%",
-    backgroundColor: "#fff",
-    paddingVertical: "15@ms",
-    borderTopLeftRadius: "20@ms",
-    borderTopRightRadius: "20@ms",
-    paddingBottom: "25@ms",
-    position: "absolute",
-    bottom: 0,
-  },
-
-  sheetItem: {
-    paddingVertical: "14@ms",
-    alignItems: "center",
-  },
-
-  sheetText: {
-    fontSize: "16@ms",
-    fontFamily: "Poppins_500Medium",
-  },
-
-  sheetCancel: {
-    marginTop: "6@ms",
-    backgroundColor: "#f2f2f2",
-    width: "100%",
-    paddingVertical: "14@ms",
-  },
-
-  optionText: {
-    fontSize: "17@ms",
-    textAlign: "center",
-    color: "#007AFF",
-    fontFamily: "Poppins_500Medium",
-  },
-
-  cancelText: {
-    fontSize: "17@ms",
-    textAlign: "center",
-    color: "red",
-    fontFamily: "Poppins_500Medium",
-  },
-});

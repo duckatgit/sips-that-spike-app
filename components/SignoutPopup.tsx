@@ -1,13 +1,12 @@
+import Theme from "@/data/constant";
 import React from "react";
 import {
-  View,
+  Modal,
   Text,
   TouchableOpacity,
-  Modal,
-  StyleSheet
+  View
 } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
-import Theme from "@/data/constant";
 
 export default function SignoutPopup({ visible, onCancel, onConfirm }:{visible:any, onCancel:any, onConfirm:any}) {
   return (

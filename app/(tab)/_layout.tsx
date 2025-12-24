@@ -1,18 +1,18 @@
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Tabs, useFocusEffect, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  View,
-  TouchableOpacity,
-  Image,
-  Text,
-} from "react-native";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { ScaledSheet } from "react-native-size-matters";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { getuserbyid } from "@/service/Api";
 import { userEvent } from "@/utils/events";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { Tabs, useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ScaledSheet } from "react-native-size-matters";
 
 interface UserData {
   name: string;
@@ -31,7 +31,7 @@ export default function TabLayout() {
 
   const getData = async () => {
     try {
-      let response = await getuserbyid();
+      let response:any = await getuserbyid();
       const user = response?.data?.getUserById;
 
       setData({

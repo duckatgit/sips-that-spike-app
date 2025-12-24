@@ -1,25 +1,25 @@
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
+  ActivityIndicator,
   Animated,
   Easing,
-  ActivityIndicator,
-  RefreshControl,
+  Image,
   Platform,
-  UIManager,
   Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  UIManager,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScaledSheet } from "react-native-size-matters";
+
+import { GETALLFAQ, GetData } from "@/service/Api";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { GetData, GETALLFAQ } from "@/service/Api";
 import { router, useRouter } from "expo-router";
+import { ScaledSheet } from "react-native-size-matters";
 
 // Enable smooth animations on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {

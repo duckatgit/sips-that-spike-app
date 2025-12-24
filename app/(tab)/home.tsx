@@ -1,29 +1,26 @@
 
-import React, { JSX, useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  FlatList,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { LinearGradient } from "expo-linear-gradient";
+import React, { JSX, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import Green from "@/assets/images/green.svg";
+import Pin from "@/assets/images/pin.svg";
+import { productLogByUserId, recommendeddrink } from "@/service/Api";
 import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { LineChart } from "react-native-chart-kit";
 import { ScaledSheet } from "react-native-size-matters";
-import { useRouter } from "expo-router";
-import { productLogByUserId } from "@/service/Api";
-import Pin from "@/assets/images/pin.svg";
-import Green from "@/assets/images/green.svg";
-import { recommendeddrink } from "@/service/Api";
 
 
 
@@ -407,13 +404,7 @@ useFocusEffect(
               <Text style={styles.lowerText}>Better choices</Text>
             </View>
 </Pressable>
-          {/* <View style={styles.bottomContent}>
-            <Image style={styles.bottomImage} source={require("../../assets/images/builder.png")} />
-            <View style={styles.bottomText}>
-              <Text style={styles.upperText}>Drink choices</Text>
-              <Text style={styles.lowerText}>Better choices</Text>
-            </View>
-          </View> */}
+         
         </View>
       </View>
     </ScrollView>

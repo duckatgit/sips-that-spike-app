@@ -1,12 +1,12 @@
 
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScaledSheet } from "react-native-size-matters";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import { productLogByUserId, recommendeddrink } from "@/service/Api";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFocusEffect } from "expo-router";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { ScaledSheet } from "react-native-size-matters";
 
 export default function log() {
   const today = new Date();
@@ -31,42 +31,7 @@ export default function log() {
     setExpandedId(expandedId === id ? null : id);
   };
 
-//   useEffect(() => {
-//     const fetchLogData = async () => {
-//       setLoading(true); // START LOADING
-//  setLogItems([]);
-//     setSpikeLevel(0);
-//     setSugarConsumed(0);
-//     setExpandedId(null);
-//       const response: any = await productLogByUserId(selected.toLowerCase());
-//      const responseAI: any = await recommendeddrink();
-// console.log("responseAI", responseAI);
 
-// if (responseAI?.status === true) {
-//   const Realdata = responseAI?.data?.recommended_drinks;
-//   console.log("realdata", Realdata);
-// setaidata(Realdata)
-// }
-
-
-//       if (response.success && response.data) {
-//         const logData = response.data.data;
-//         const items = Object.keys(logData)
-//           .filter((key) => key !== "result")
-//           .map((key) => logData[key]);
-
-//         setLogItems(items);
-//         setSpikeLevel(logData.result?.spikePercentage ?? 0);
-//         setSugarConsumed(logData.result?.totalSugar ?? 0);
-//       } else {
-//         // console.error("Failed to fetch data:", response.message);
-//       }
-
-//       setTimeout(() => setLoading(false), 600); // SMOOTH END LOADING
-//     };
-
-//     fetchLogData();
-//   }, [selected]);
 
  const fetchLogData = async (selected: string) => {
     try {
@@ -118,55 +83,7 @@ export default function log() {
     }
   };
 useEffect(() => {
-  // const fetchLogData = async () => {
-  //   try {
-  //     setLoading(true); // START LOADING
-
-  //     // Reset state before new fetch
-  //     setLogItems([]);
-  //     setSpikeLevel(0);
-  //     setSugarConsumed(0);
-  //     setExpandedId(null);
-
-  //     // Fetch logs
-  //     const response: any = await productLogByUserId(selected.toLowerCase());
-
-  //     // Fetch AI recommendation
-  //     const responseAI: any = await recommendeddrink();
-  //     console.log("responseAI", responseAI);
-
-  //     // AI DATA HANDLING
-  //     if (responseAI?.status === true) {
-  //       const Realdata = responseAI?.data?.recommended_drinks ?? [];
-  //       console.log("realdata", Realdata);
-  //       setaidata(Realdata);
-  //     } else {
-  //       setaidata([]); // fallback safe
-  //     }
-
-  //     // USER LOG DATA
-  //     if (response?.success && response?.data) {
-  //       const logData = response.data.data ?? {};
-
-  //       const items = Object.keys(logData)
-  //         .filter((key) => key !== "result")
-  //         .map((key) => logData[key]);
-
-  //       setLogItems(items);
-  //       setSpikeLevel(logData.result?.spikePercentage ?? 0);
-  //       setSugarConsumed(logData.result?.totalSugar ?? 0);
-  //     } else {
-  //       // BACKEND ERROR: handle softly
-  //       setLogItems([]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Fetch error:", err);
-  //     setaidata([]);
-  //     setLogItems([]);
-  //   } finally {
-  //     setTimeout(() => setLoading(false), 600); // smooth animation
-  //   }
-  // };
+ 
 
   fetchLogData(selected);
 }, [selected]);

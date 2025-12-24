@@ -11,6 +11,7 @@ export const useToast = () => {
       visibilityTime: duration,
       autoHide: true,
       topOffset: 50,
+    
     });
   };
 
