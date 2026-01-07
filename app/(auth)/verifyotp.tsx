@@ -52,6 +52,7 @@ const showToastNotification = (type: string, msg: string) => {
   });
 
   const onSubmit = async(data: any) => {
+   
     const response=await VerfiyOtp(data);
     console.log("result",response);
 

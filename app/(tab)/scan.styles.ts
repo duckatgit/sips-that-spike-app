@@ -187,6 +187,7 @@ submitBtnText: {
   sheetItem: {
     paddingVertical: "14@ms",
     alignItems: "center",
+     zIndex: 100
   },
 
   sheetText: {

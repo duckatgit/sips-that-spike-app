@@ -24,6 +24,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { z } from "zod";
 import { styles } from "./scan.styles";
+
 const Theme = {
   color: {
     primaryColor: "#F63E4C",
@@ -162,49 +163,51 @@ const showToastNotification = (type: string, msg: string) => {
   const closeImageOptions = () => setImageOptionsVisible(false);
 
   const pickFromGallery = async () => {
+    console.log("its hit inside");
     closeImageOptions();
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-        showToastNotification("Permission required",  "Please allow access to your gallery.");
-    
-      return;
+    console.log("above function call");
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const  status  = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log("status",status);
+    if (!status.granted) {
+      return  showToastNotification("Permission required",  "Please allow access to your gallery.");
     }
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-      if (!result.canceled && result.assets?.length) {
-        const uri = result.assets[0].uri;
+      console.log(" reach result");
+     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
+     console.log("result of Gallary",result)
+        
+       if (!result.canceled && result.assets?.length) {
+  const uri = result.assets[0].uri;
   setPickedImage(uri);
   setValue("image", uri, { shouldValidate: true });
-        // setPickedImage(result.assets[0].uri);
-        
-      }
-    } catch (err) {
-      console.log("Gallery pick error:", err);
-    }
+}
+          
+ 
   };
 
   const takePhoto = async () => {
-    closeImageOptions();
+    console.log("inside photo");
+    // closeImageOptions();
+    console.log("inside above function call");
+      await new Promise(resolve => setTimeout(resolve, 500));
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    console.log("status",status);
     if (status !== "granted") {
-       showToastNotification("Permission required",  "Please allow camera access to your gallery.");
+       showToastNotification("error",  "Please allow camera access ");
   
       return;
     }
     try {
-      const result = await ImagePicker.launchCameraAsync({
+      console.log(" reach result in camera");
+      const result = await ImagePicker?.launchImageLibraryAsync({
+       
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.8,
+        quality: 0.5,
       });
-      if (!result.canceled && result.assets?.length) {
-        // setPickedImage(result.assets[0].uri);
-          const uri = result.assets[0].uri;
+      console.log("result of camera",result)
+      if (!result.canceled ) {
+          const uri = result?.assets[0]?.uri;
   setPickedImage(uri);
   setValue("image", uri, { shouldValidate: true });   // <-- ADD
       }
@@ -475,11 +478,21 @@ console.log("loading",loading);
         </TouchableWithoutFeedback>
 
         <View style={styles.bottomSheet}>
-          <TouchableOpacity style={styles.sheetItem} onPress={takePhoto}>
+          <TouchableOpacity style={styles.sheetItem} onPress={()=>{
+              closeImageOptions();;
+               setTimeout(() => {
+      takePhoto();
+    }, 300);
+          }}>
             <Text style={styles.optionText}>Take Photo</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.sheetItem} onPress={pickFromGallery}>
+          <TouchableOpacity style={styles.sheetItem} onPress={()=>{
+              closeImageOptions();;
+               setTimeout(() => {
+      pickFromGallery();
+    }, 300);
+          }}>
             <Text style={styles.optionText}>Choose from Gallery</Text>
           </TouchableOpacity>
 
@@ -490,9 +503,7 @@ console.log("loading",loading);
         
       </Modal>
 
-  
-
-    {/* </SafeAreaView> */}
+ 
     </>
   );
 }

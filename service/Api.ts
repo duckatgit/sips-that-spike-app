@@ -4,14 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
+  InternalAxiosRequestConfig
 } from "axios";
 import Constants from "expo-constants";
 
 
 const baseURL = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL;
-// const baseURL = "https://calista-vicinal-tamie.ngrok-free.dev";
+console.log("baseurl",baseURL);
+
 let isLoggingOut = false;
 const apiClient: AxiosInstance = axios.create({
   baseURL,
@@ -38,18 +38,26 @@ apiClient.interceptors.request.use(
    RESPONSE INTERCEPTOR
 -------------------------------------------- */
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response) => response,
   async error => {
     const status = error?.response?.status;
+    const url = error?.config?.url;
 
-    if ((status === 401 || status === 403) && !isLoggingOut) {
+    
+    if (
+      (status === 401 || status === 403) &&
+      !url?.includes("/api/auth/login") &&
+      !isLoggingOut
+    ) {
       isLoggingOut = true;
 
-      await AsyncStorage.multiRemove(["token",
+      await AsyncStorage.multiRemove([
+        "token",
         "userId",
         "role",
         "name",
-        "email",]);
+        "email",
+      ]);
 
       redirectToLogin();
 
@@ -58,10 +66,10 @@ apiClient.interceptors.response.use(
       }, 1000);
     }
 
-    console.log("errors check", error);
     return Promise.reject(error);
   }
 );
+
 
 /* -------------------------------------------
    COMMON GET
@@ -195,9 +203,7 @@ export const Signup = async (data: any) => {
     console.log("response", response);
     return response.data;
   } catch (err: any) {
-    console.log("err", err);
-    if (err.response) return err.response.data;
-    return { success: false, message: err.message };
+     throw err.response?.data || { message: "Signup failed" };
   }
 };
 
@@ -231,13 +237,14 @@ export const VerfiyOtp = async (data: any) => {
   }
 };
 
+
+
 export const Login = async (data: any) => {
   try {
     const response = await apiClient.post("/api/auth/login", data);
     return response.data;
   } catch (err: any) {
-    if (err.response) return err.response.data;
-    return { success: false, message: err.message };
+    throw err.response?.data || { message: "Login failed" };
   }
 };
 

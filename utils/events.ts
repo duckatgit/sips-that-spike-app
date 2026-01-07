@@ -4,7 +4,7 @@ import mitt from 'mitt';
 type Events = {
   profileUpdated: {
     name: string;
-    email: string;
+    // email: string;
     image: string;
   };
 };

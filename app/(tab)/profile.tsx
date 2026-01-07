@@ -320,7 +320,11 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
   <View style={styles.nine}>
     <View style={styles.eight}>
       <Text>Healthy choice</Text>
-      <Text>{healthyChoice && allScansData.totalScans?healthyChoice/allScansData.totalScans:''}</Text>
+      {/* <Text>{healthyChoice && allScansData.totalScans?(healthyChoice/allScansData.totalScans).toFixed(2):''}</Text> */}
+        {/* one correct for decimal show */}
+         <Text>{allScansData.totalScans > 0
+    ? (healthyChoice / allScansData.totalScans).toFixed(2)
+    : ''}</Text>              
     </View>
 
     {/* Dynamic Progress Bar */}

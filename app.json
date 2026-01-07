@@ -14,8 +14,13 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.sips.spike",
+      "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app requires camera access to scan barcodes and QR codes."
+        "NSCameraUsageDescription": "Allow camera access to take photos",
+        "NSPhotoLibraryUsageDescription": "Allow access to select photos from gallery",
+        "NSPhotoLibraryAddUsageDescription": "Allow saving photos to gallery",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -32,9 +37,7 @@
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.ACCESS_COARSE_LOCATION"
       ]
     },
     "web": {
@@ -72,7 +75,7 @@
       "reactCompiler": true
     },
     "extra": {
-      "EXPO_PUBLIC_API_URL": "https://calista-vicinal-tamie.ngrok-free.dev",
+      "EXPO_PUBLIC_API_URL": "https://sips-that-spike-be.mmopro.in",
       "router": {},
       "eas": {
         "projectId": "44baa685-b9c8-4452-a910-f1398893bd3a"

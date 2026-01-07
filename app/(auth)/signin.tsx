@@ -22,6 +22,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./signin.styles";
+
+import Constants from "expo-constants";
+
+
+const baseURL = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL;
+console.log("baseurl",baseURL);
 // ----------------------
 // Zod Validation Schema
 // ----------------------
@@ -38,25 +44,14 @@ const signInSchema = z.object({
     .trim()
     .min(1, "Password is required")
     .min(8, "Password must be at least 8 characters")
-  //  .regex(
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_])(?!.*\s).+$/,
-  //   "Password must contain at least one uppercase letter, one lowercase letter, one special character, and no spaces"
-  // )
-  // .refine(
-  //     (val) =>
-  //       !val.startsWith(" ") &&
-  //       /[A-Z]/.test(val) &&
-  //       /[0-9]/.test(val) &&
-  //       /[^A-Za-z0-9]/.test(val),
-  //     "Password must include uppercase, number, and special character"
-  //   ),
 });
 
 type SignInData = z.infer<typeof signInSchema>;
 
 export default function SignInScreen() {
-  const [loading, setLoading] = useState(false); // button loader
-  const [pageLoading, setPageLoading] = useState(false); // full screen loader
+  
+  const [loading, setLoading] = useState(false); 
+  const [pageLoading, setPageLoading] = useState(false); 
   const [showPassword, setShowPassword] = useState(false);
 const { showToast } = useToast();
   const router = useRouter();
@@ -92,39 +87,35 @@ const { showToast } = useToast();
 
   // -------- API Login --------
   const onSubmit = async (data: SignInData) => {
+    console.log("data",data);
     setLoading(true);
 
-    try {
-      const response = await Login({
-        email: data.email,
-        password: data.password,
-        role: "user",
-      });
+try {
+  const response = await Login({
+    email: data.email,
+    password: data.password,
+    role: "user",
+  });
+  
 
-      if (response.status) {
-        await AsyncStorage.setItem("token", response.user?.token);
-        await AsyncStorage.setItem("userId", response.user?.id);
-        await AsyncStorage.setItem("role", response.user?.role);
-        await AsyncStorage.setItem("name", response.user?.name);
-        await AsyncStorage.setItem("email", response.user?.email);
+  await AsyncStorage.multiSet([
+    ["token", response.user.token],
+    ["userId", response.user.id],
+    ["role", response.user.role],
+    ["name", response.user.name],
+    ["email", response.user.email],
+  ]);
 
+  showToastNotification("success", response.message);
+  router.replace("/(tab)/home");
 
-        showToastNotification("success", response.message);
-        router.replace("/(tab)/home");
-      } else {
-        console.log("response",response);
-        showToastNotification("error", response.message);
-      }
-    } catch (err: any) {
-        showToastNotification("error", err?.message || "Something went wrong!");
-   setLoading(false);
-      
+} catch (err: any) {
+  console.log("Login error:", err);
+  showToastNotification("error", err?.message || "Login failed");
+} finally {
+  setLoading(false);
+}
 
-    }
- finally{
-   setLoading(false);
-
- }
   };
 
   // -------- Full Screen Loader UI --------
@@ -132,7 +123,7 @@ const { showToast } = useToast();
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#F63E4C" />
-        {/* <Text style={styles.loadingText}>Loading content...</Text> */}
+       
       </View>
     );
   }
@@ -257,4 +248,9 @@ const { showToast } = useToast();
   );
 }
 
-// ============ STYLES ============
+// // ============ STYLES ============
+
+
+
+
+

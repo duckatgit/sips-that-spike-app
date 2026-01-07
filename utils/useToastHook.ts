@@ -1,17 +1,17 @@
+
 import Toast from "react-native-toast-message";
 
 type ToastType = "success" | "error" | "info";
 
 export const useToast = () => {
-  const showToast = (type: string , msg: string, duration = 3000) => {
+  const showToast = (type: ToastType|string, msg: string, duration = 3000) => {
     Toast.show({
-      type: type,
+      type, // must be one of "success" | "error" | "info"
       text1: msg,
       position: "top",
       visibilityTime: duration,
       autoHide: true,
       topOffset: 50,
-    
     });
   };
 

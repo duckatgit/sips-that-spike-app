@@ -54,6 +54,7 @@ export default function ForgotPassword() {
     try {
       const response = await forgotPaswordOtp(data);
 
+
       console.log("response", response);
       if (response.success === true) {
         showToastNotification("success", response.message);
