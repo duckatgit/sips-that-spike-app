@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sips.spike",
-      "buildNumber": "1.0.0",
+      "buildNumber": "3",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow camera access to take photos",
         "NSPhotoLibraryUsageDescription": "Allow access to select photos from gallery",

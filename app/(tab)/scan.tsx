@@ -199,7 +199,7 @@ const showToastNotification = (type: string, msg: string) => {
     }
     try {
       console.log(" reach result in camera");
-      const result = await ImagePicker?.launchImageLibraryAsync({
+      const result = await ImagePicker?.launchCameraAsync({
        
         allowsEditing: true,
         aspect: [1, 1],
