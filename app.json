@@ -17,9 +17,9 @@
       "bundleIdentifier": "com.sips.spike",
       "buildNumber": "3",
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow camera access to take photos",
-        "NSPhotoLibraryUsageDescription": "Allow access to select photos from gallery",
-        "NSPhotoLibraryAddUsageDescription": "Allow saving photos to gallery",
+        "NSCameraUsageDescription": "Sips that Spike uses the camera so you can take photos to upload as your profile picture and add images to drinks and menu items.",
+        "NSPhotoLibraryUsageDescription": "Sips that Spike accesses your photo library so you can choose existing photos to upload as your profile picture or attach images to drinks and menu items.",
+        "NSPhotoLibraryAddUsageDescription": "Sips that Spike saves images to your photo library only when you choose to download or save an image from the app.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },

@@ -303,3 +303,19 @@ export const recommendeddrink = async () => {
     return { success: false, message: err.message };
   }
 };
+
+export const deleteUser = async () => {
+  try {
+    const userId = await AsyncStorage.getItem("userId");
+    if (!userId) {
+      return { success: false, message: "User ID not found", data: null };
+    }
+    const response = await apiClient.delete(
+      `/api/auth/deleteUser?userId=${userId}`
+    );
+
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.message, data: null };
+  }
+};

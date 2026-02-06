@@ -1,6 +1,7 @@
 
+import DeleteAccount from "@/components/DeleteAccountPopup";
 import SignoutPopup from "@/components/SignoutPopup";
-import { getAllScansDataByUsers, getuserbyid } from "@/service/Api";
+import { deleteUser, getAllScansDataByUsers, getuserbyid } from "@/service/Api";
 import { useToast } from "@/utils/useToastHook";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -31,45 +32,46 @@ export default function Profile() {
   const [loading, setLoading] = useState(false); // logout loader
   const [profileLoading, setProfileLoading] = useState(true); // page loading
   const { showToast } = useToast();
-  const [isSignOutConfirmationOpen,setIsSignOutConfirmationOpen]=useState(false);
+  const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] = useState(false);
+  const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false);
   const [data, setData] = useState<UserData>({
     name: "",
     email: "",
     image: "",
   });
-  
-const [allScansData, setAllScansData] = useState<any>({
-  totalCalories:'',
-  totalSugar:'',
-  healthyChoice:'',
-  totalScans:'',
-  dailySugarIntake:'',
-  dayStreak:''
-});
 
-const LinearProgress = ({ value, max }:any) => {
-  const percent = Math.min((value / max) * 100, 100);
+  const [allScansData, setAllScansData] = useState<any>({
+    totalCalories: '',
+    totalSugar: '',
+    healthyChoice: '',
+    totalScans: '',
+    dailySugarIntake: '',
+    dayStreak: ''
+  });
 
-  return (
-    <View style={{ width: "100%", height: 12, backgroundColor: "#eee", borderRadius: 10 }}>
-      <View
-        style={{
-          width: `${percent}%`,
-          height: "100%",
-          backgroundColor:
-            percent > 70 ? "red" : percent > 40 ? "orange" : "green",
-          borderRadius: 10,
-        }}
-      />
-    </View>
-  );
-};
-const showToastNotification = (type: string, msg: string) => {
+  const LinearProgress = ({ value, max }: any) => {
+    const percent = Math.min((value / max) * 100, 100);
+
+    return (
+      <View style={{ width: "100%", height: 12, backgroundColor: "#eee", borderRadius: 10 }}>
+        <View
+          style={{
+            width: `${percent}%`,
+            height: "100%",
+            backgroundColor:
+              percent > 70 ? "red" : percent > 40 ? "orange" : "green",
+            borderRadius: 10,
+          }}
+        />
+      </View>
+    );
+  };
+  const showToastNotification = (type: string, msg: string) => {
     console.log("EEERERERERERE", type);
-//  showToast(type, msg);
+    //  showToast(type, msg);
 
- showToast(type, msg)
- 
+    showToast(type, msg)
+
   };
   // ============================
   // FETCH USER DATA
@@ -78,18 +80,18 @@ const showToastNotification = (type: string, msg: string) => {
     try {
       setProfileLoading(true);
 
-      let response:any = await getuserbyid();
+      let response: any = await getuserbyid();
       const user = response?.data?.getUserById;
-    let res=await getAllScansDataByUsers();
-    console.log("res data of alluser",res);
-    setAllScansData({
-      totalCalories:res.result.totalCalories,
-      totalSugarIntake:res.result.dailySugarIntake,
-      healthyChoice:res.result.healthyChoice,
-      totalScans:res.result.totalScans,
-     totalSugar: res.result.totalSugar,
-      dayStreak:res.result.dayStreak
-    })
+      let res = await getAllScansDataByUsers();
+      console.log("res data of alluser", res);
+      setAllScansData({
+        totalCalories: res.result.totalCalories,
+        totalSugarIntake: res.result.dailySugarIntake,
+        healthyChoice: res.result.healthyChoice,
+        totalScans: res.result.totalScans,
+        totalSugar: res.result.totalSugar,
+        dayStreak: res.result.dayStreak
+      })
       console.log("User Data:", user);
 
       setData({
@@ -118,22 +120,40 @@ const showToastNotification = (type: string, msg: string) => {
   // LOGOUT FUNCTION
   // ============================
   const onLogout = async () => {
-    
+
     setLoading(true);
     try {
       await AsyncStorage.multiRemove(["token", "userId", "role", "name"]);
-       showToastNotification("success", "Logout Successfully");
+      showToastNotification("success", "Logout Successfully");
 
       router.replace("/signin");
     } catch (error) {
       console.error("Logout Error:", error);
       showToastNotification("error", "Something went wrong!");
 
-    
+
     } finally {
       setLoading(false);
     }
   };
+
+  const onDeleteAccount = async () => {
+    setLoading(true);
+    try {
+      const responsne = await deleteUser();
+      if (responsne.status) {
+        showToastNotification("success", "User Deleted Successfully");
+        await AsyncStorage.multiRemove(["token", "userId", "role", "name"]);
+        router.replace("/signin");
+        setIsDeleteAccount(false);
+      }
+    } catch (error: any) {
+      showToastNotification("error", error?.response?.data?.message || error?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+
+  }
 
   // ============================
   // PAGE LOADER WHILE GETTING PROFILE
@@ -153,23 +173,23 @@ const showToastNotification = (type: string, msg: string) => {
     );
   }
 
- const dailySugarIntake = allScansData.totalSugarIntake??0; 
-const healthyChoice = allScansData.healthyChoice??0;
-      // 1
-console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
+  const dailySugarIntake = allScansData.totalSugarIntake ?? 0;
+  const healthyChoice = allScansData.healthyChoice ?? 0;
+  // 1
+  console.log("dailySugarIntake", dailySugarIntake, healthyChoice);
   // ============================
   // MAIN UI RENDER
   // ============================
-  console.log("allscandata",allScansData)
+  console.log("allscandata", allScansData)
   return (
     // <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 150,backgroundColor:"white",justifyContent:"center",alignItems:"center",}}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 150, backgroundColor: "white", justifyContent: "center", alignItems: "center", }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
 
-       
+
         <View style={styles.first}>
           <View style={styles.second}>
             <View style={styles.imgdiv}>
@@ -194,8 +214,8 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
                       height: "100%",
                       resizeMode: "contain",
                       alignSelf: "flex-start",
-                     
-                     
+
+
                     }}
                   />
                 </View>
@@ -203,21 +223,21 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
             </View>
 
             <View style={styles.fourth}>
-           {/* <Text style={styles.name}>
+              {/* <Text style={styles.name}>
   {data?.name
     ? data.name.length > 15
       ? data.name.substring(0, 15) + "..."
       : data.name
     : "User"}
 </Text> */}
-<Text
-  style={styles.name}
-  numberOfLines={1}
-  ellipsizeMode="tail"
->
-  {data?.name || "User"}
-</Text>
-              <Text style={styles.email}>{data.email?data.email:"user@gmail.com"}</Text>
+              <Text
+                style={styles.name}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {data?.name || "User"}
+              </Text>
+              <Text style={styles.email}>{data.email ? data.email : "user@gmail.com"}</Text>
             </View>
           </View>
 
@@ -274,8 +294,8 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
                 </View>
                 <View style={styles.box3}>
                   <Text style={styles.total}>
-  {allScansData.totalSugar ? allScansData.totalSugar.toFixed(2) : "0.00"}g
-</Text>
+                    {allScansData.totalSugar ? allScansData.totalSugar.toFixed(2) : "0.00"}g
+                  </Text>
 
                   <Text style={styles.tscan}>Total Sugar</Text>
                 </View>
@@ -304,33 +324,33 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
           </View>
         </View>
 
-    
 
-<View style={styles.ten}>
-  <View style={styles.nine}>
-    <View style={styles.eight}>
-      <Text>Daily Sugar Intake</Text>
-      <Text>{dailySugarIntake.toFixed(2)}g </Text>
-    </View>
 
-    {/* Dynamic Progress Bar */}
-    <LinearProgress value={dailySugarIntake} max={50} />
-  </View>
+        <View style={styles.ten}>
+          <View style={styles.nine}>
+            <View style={styles.eight}>
+              <Text>Daily Sugar Intake</Text>
+              <Text>{dailySugarIntake.toFixed(2)}g </Text>
+            </View>
 
-  <View style={styles.nine}>
-    <View style={styles.eight}>
-      <Text>Healthy choice</Text>
-      {/* <Text>{healthyChoice && allScansData.totalScans?(healthyChoice/allScansData.totalScans).toFixed(2):''}</Text> */}
-        {/* one correct for decimal show */}
-         <Text>{allScansData.totalScans > 0
-    ? (healthyChoice / allScansData.totalScans).toFixed(2)
-    : ''}</Text>              
-    </View>
+            {/* Dynamic Progress Bar */}
+            <LinearProgress value={dailySugarIntake} max={50} />
+          </View>
 
-    {/* Dynamic Progress Bar */}
-    <LinearProgress value={healthyChoice} max={10} />
-  </View>
-</View>
+          <View style={styles.nine}>
+            <View style={styles.eight}>
+              <Text>Healthy choice</Text>
+              {/* <Text>{healthyChoice && allScansData.totalScans?(healthyChoice/allScansData.totalScans).toFixed(2):''}</Text> */}
+              {/* one correct for decimal show */}
+              <Text>{allScansData.totalScans > 0
+                ? (healthyChoice / allScansData.totalScans).toFixed(2)
+                : ''}</Text>
+            </View>
+
+            {/* Dynamic Progress Bar */}
+            <LinearProgress value={healthyChoice} max={10} />
+          </View>
+        </View>
 
         {/* ============================
           ACCOUNT SECTION (UI SAME)
@@ -345,7 +365,7 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
               <View style={styles.statstitlesfirsti}>
                 <View style={styles.hell}>
                   <View style={styles.bell}>
-                   <MaterialIcons name="local-police" size={16} color="black" />
+                    <MaterialIcons name="local-police" size={16} color="black" />
                   </View>
                   <Text style={styles.note}>Terms & Conditions</Text>
                 </View>
@@ -434,7 +454,7 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
         ============================ */}
         <Pressable
           style={styles.scanButton}
-          onPress={()=>setIsSignOutConfirmationOpen(true)}
+          onPress={() => setIsSignOutConfirmationOpen(true)}
           disabled={loading}
         >
           {loading ? (
@@ -446,9 +466,24 @@ console.log("dailySugarIntake",dailySugarIntake,healthyChoice);
             </>
           )}
         </Pressable>
-         </View>
-         {isSignOutConfirmationOpen && <SignoutPopup visible={isSignOutConfirmationOpen} onCancel={()=>setIsSignOutConfirmationOpen(false)} onConfirm={onLogout} />}
-      </ScrollView>
+        <Pressable
+          style={styles.scanButton}
+          onPress={() => setIsDeleteAccount(true)}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#F63E4C" />
+          ) : (
+            <>
+              <Ionicons name="log-out-outline" size={24} color="#F63E4C" />
+              <Text style={styles.scanButtonText}> Delete Account</Text>
+            </>
+          )}
+        </Pressable>
+      </View>
+      {isDeleteAccount && <DeleteAccount visible={isDeleteAccount} isLoading={loading} onCancel={() => setIsDeleteAccount(false)} onConfirm={onDeleteAccount} />}
+      {isSignOutConfirmationOpen && <SignoutPopup visible={isSignOutConfirmationOpen} onCancel={() => setIsSignOutConfirmationOpen(false)} onConfirm={onLogout} />}
+    </ScrollView>
     // </SafeAreaView>
   );
 }
@@ -495,7 +530,7 @@ export const styles = ScaledSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     // padding: "2@ms",
-     paddingRight: "10@ms",
+    paddingRight: "10@ms",
     borderWidth: 2,
     borderColor: "#FDD1D3",
   },
@@ -537,7 +572,7 @@ export const styles = ScaledSheet.create({
     borderRadius: "10@ms",
     justifyContent: "space-evenly",
     alignItems: "center",
-    paddingHorizontal:"3@ms"
+    paddingHorizontal: "3@ms"
   },
 
   fourth: {
@@ -546,7 +581,7 @@ export const styles = ScaledSheet.create({
     justifyContent: "center",
     // borderWidth:1,
     // borderColor:"black",
-    gap:"3@ms"
+    gap: "3@ms"
   },
 
   name: {
@@ -581,7 +616,7 @@ export const styles = ScaledSheet.create({
     fontSize: "18@ms",
     color: "#1B1919",
     marginBottom: "10@ms",
-    lineHeight:30
+    lineHeight: 30
   },
 
   status: {
@@ -589,7 +624,7 @@ export const styles = ScaledSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop:"10@ms",
+    marginTop: "10@ms",
     // borderWidth:1,
     // borderColor:"black"
   },
@@ -693,14 +728,14 @@ export const styles = ScaledSheet.create({
     borderRadius: "10@ms",
   },
 
- statstitles: {
-  width: "100%",
-  minHeight: "28@ms",
-  paddingVertical: "4@ms",
-  // borderWidth: 1,
-  // borderColor: "black",
-  justifyContent: "center",
-},
+  statstitles: {
+    width: "100%",
+    minHeight: "28@ms",
+    paddingVertical: "4@ms",
+    // borderWidth: 1,
+    // borderColor: "black",
+    justifyContent: "center",
+  },
 
 
   statstitlesyi: {
