@@ -7,6 +7,9 @@ import { Tabs, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
+  Linking,
+  Modal,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -28,10 +31,11 @@ export default function TabLayout() {
     image: "",
   });
   const [scan, setScan] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const getData = async () => {
     try {
-      let response:any = await getuserbyid();
+      let response: any = await getuserbyid();
       const user = response?.data?.getUserById;
 
       setData({
@@ -49,7 +53,7 @@ export default function TabLayout() {
     if (screen === "scan") setScan(true);
     else setScan(false);
 
-    router.push(`/(tab)/${screen}`as any) ;
+    router.push(`/(tab)/${screen}` as any);
   };
 
   useEffect(() => {
@@ -72,7 +76,7 @@ export default function TabLayout() {
   );
 
   return (
-    
+
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
@@ -117,7 +121,7 @@ export default function TabLayout() {
           headerTitle: () => (
             <View>
               <Text style={styles.headerTitle} numberOfLines={1}
-  ellipsizeMode="tail">
+                ellipsizeMode="tail">
                 {data?.name
                   ? data.name.length > 20
                     ? data.name.slice(0, 10) + "..."
@@ -127,6 +131,50 @@ export default function TabLayout() {
               <Text style={styles.headerSubtitle}>
                 Let's track your sugar today
               </Text>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <Text>
+                  <Text style={{ textDecorationLine: 'none' }}>Note: </Text>
+                  <Text style={{ textDecorationLine: 'underline', color: 'blue' }}>
+                    Disclaimer & Data Source
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+
+              <Modal
+                visible={modalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisible(false)}
+              >
+                <View style={styles.modalBackground}>
+                  <View style={styles.modalContainer}>
+                    <ScrollView>
+                      <Text style={styles.modalTitle}>Disclaimer</Text>
+                      <Text style={styles.modalText}>
+                        This app is intended for informational and educational purposes only.
+                        It does not provide medical advice, diagnosis, treatment, or professional healthcare recommendations.
+                        Users should consult a qualified healthcare professional for any medical concerns.
+                      </Text>
+                      <Text style={styles.modalText}>
+                        Nutritional information displayed in the app is sourced from the Open Food Facts public database.
+                      </Text>
+                      <Text
+                        style={styles.linkText}
+                        onPress={() => Linking.openURL('https://world.openfoodfacts.org/')}
+                      >
+                        Data Source: https://world.openfoodfacts.org/
+                      </Text>
+                      <Text style={styles.modalText}>
+                        All sugar spike estimations and calorie calculations are simplified approximations designed to provide general awareness and should not be considered medical or clinical guidance.
+                      </Text>
+                    </ScrollView>
+
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                      <Text style={styles.closeText}>Close</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
             </View>
           ),
         }}
@@ -141,7 +189,7 @@ export default function TabLayout() {
           headerShown: true,
         }}
       />
-     <SafeAreaView edges={['bottom']}></SafeAreaView>
+      <SafeAreaView edges={['bottom']}></SafeAreaView>
     </Tabs>
   );
 }
@@ -197,10 +245,10 @@ function CustomTabBar({ state, handlePress, scan }: CustomTabBarProps) {
             onPress={() => handlePress("scan")}
           >
             <AntDesign
-    name="scan"
-    size={20}
-    color={scan ? "white" : "black"}
-  />
+              name="scan"
+              size={20}
+              color={scan ? "white" : "black"}
+            />
             <Text style={[styles.label, { color: scan ? "white" : "black" }]}>
               Scan
             </Text>
@@ -304,4 +352,13 @@ const styles = ScaledSheet.create({
     fontFamily: "Poppins_400Regular",
     marginTop: "2@ms",
   },
+
+  modalBackground: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
+  modalContainer: { backgroundColor: 'white', borderRadius: 10, padding: 20, maxHeight: '80%' },
+  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+  modalText: { fontSize: 16, marginBottom: 10 },
+  linkText: { fontSize: 16, color: '#007AFF', textDecorationLine: 'underline', marginBottom: 10 },
+  closeButton: { marginTop: 10, alignSelf: 'center', padding: 10 },
+  closeText: { fontSize: 16, color: '#007AFF', fontWeight: 'bold' },
+  disclaimerText: { marginTop: 8 },
 });
