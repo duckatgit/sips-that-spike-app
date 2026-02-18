@@ -32,33 +32,45 @@ import { styles } from "./editprofile.styles";
 
 /* --------------------- Schema --------------------- */
 const schema = z.object({
- firstName: z
-        .string()
-        .nonempty("First Name is required")
-        .min(3, "Minimum 3 characters required")
-        .max(40, "Maximum 40 characters allowed")
-        .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
-        .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
-        .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
-    lastName: z
-        .string()
-        .nonempty("Last Name is required")
-        .min(3, "Minimum 3 characters required")
-        .max(40, "Maximum 40 characters allowed")
-        .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
-        .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
-        .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
-  phone: z.string().nonempty("Phone number is required")
-    .min(8, "Not less than 8 digits")
-    .max(15, "Not more than 15 digits")
-    .regex(/^[0-9]{8,15}$/, "Enter a valid phone number"),
+  firstName: z
+    .string()
+    .nonempty("First Name is required")
+    .min(3, "Minimum 3 characters required")
+    .max(40, "Maximum 40 characters allowed")
+    .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+    .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
+    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+  lastName: z
+    .string()
+    .nonempty("Last Name is required")
+    .min(3, "Minimum 3 characters required")
+    .max(40, "Maximum 40 characters allowed")
+    .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+    .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
+    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+  phone: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (val) => !val || val.length === 0 || val.length >= 8,
+      "Not less than 8 digits"
+    )
+    .refine(
+      (val) => !val || val.length === 0 || val.length <= 15,
+      "Not more than 15 digits"
+    )
+    .refine(
+      (val) => !val || val.length === 0 || /^[0-9]{8,15}$/.test(val),
+      "Enter a valid phone number"
+    ),
 });
 
 type FormValues = z.infer<typeof schema>;
 
 /* --------------------- Phone Input --------------------- */
 type PhoneInputProps = {
-  value: string;
+  value: string | undefined;
   onChange: (val: string) => void;
   countryCode: CountryCode;
   callingCode: string;
@@ -103,6 +115,7 @@ const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange
         onChangeText={(text) => {
           const digits = text.replace(/\D/g, "");
           setLocalPhone(digits);
+          // Pass "" when empty so optional schema accepts it
           onChange(digits);
         }}
       />
@@ -113,7 +126,7 @@ const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange
 };
 
 /* --------------------- Get country by calling code --------------------- */
-const getCountryCodeFromCallingCode = async (callingCode: string): Promise<{ countryCode: CountryCode }> =>  {
+const getCountryCodeFromCallingCode = async (callingCode: string): Promise<{ countryCode: CountryCode }> => {
   const allCountries = await getAllCountries(FlagType.FLAT);
   const country = allCountries?.find((c) => c.callingCode?.includes(callingCode));
   return { countryCode: country?.cca2 ?? "US" };
@@ -143,7 +156,7 @@ export default function EditProfile() {
     image: "",
   });
 
-  const { control, handleSubmit, setValue, watch, formState: { errors,isDirty } } = useForm<FormValues>({
+  const { control, handleSubmit, setValue, watch, formState: { errors, isDirty } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: { firstName: "", lastName: "", phone: "" },
@@ -188,18 +201,18 @@ export default function EditProfile() {
       headerTitle: "",
       headerTitleAlign: "left",
       headerLeft: () => (
-  <TouchableOpacity
-    onPress={() => router.push("/(tab)/profile")}
-    style={{ marginLeft: 16, marginTop: -3 }}
-  >
-    <View style={styles.backContainer}>
-      <View style={styles.backbtn}>
-      <Ionicons name="chevron-back-outline" size={26} color="#636363" />
-      </View>
-      <Text style={styles.backText}>Back</Text>
-    </View>
-  </TouchableOpacity>
-),
+        <TouchableOpacity
+          onPress={() => router.push("/(tab)/profile")}
+          style={{ marginLeft: 16, marginTop: -3 }}
+        >
+          <View style={styles.backContainer}>
+            <View style={styles.backbtn}>
+              <Ionicons name="chevron-back-outline" size={26} color="#636363" />
+            </View>
+            <Text style={styles.backText}>Back</Text>
+          </View>
+        </TouchableOpacity>
+      ),
     });
   }, []);
 
@@ -215,17 +228,17 @@ export default function EditProfile() {
       const countryIso = await getCountryCodeFromCallingCode(code);
 
       setCountryCode(countryIso?.countryCode);
-      setCallingCode(code);
-      setValue("firstName", user.firstName);
-      setValue("lastName", user.lastName);
-      setValue("phone", number);
+      setCallingCode(code || "91");
+      setValue("firstName", user.firstName || "");
+      setValue("lastName", user.lastName || "");
+      setValue("phone", number || "");
       setProfileImage(user.image || "");
 
       originalRef.current = {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        phone: number,
-        callingCode: code,
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        phone: number || "",
+        callingCode: code || "91",
         image: user.image || "",
       };
     } catch {
@@ -243,33 +256,33 @@ export default function EditProfile() {
     // const perm = await ImagePicker.requestCameraPermissionsAsync();
 
 
-  await new Promise(resolve => setTimeout(resolve, 500));
- const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    console.log("permpermperm === " , status)
-  if (status !== "granted") {
-    return showToast("error", "Camera permission is required");
-  
-    
-  }
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    console.log("permpermperm === ", status)
+    if (status !== "granted") {
+      return showToast("error", "Camera permission is required");
+
+
+    }
 
     // if (!perm.granted) return showToast("error", "Camera access needed");
- console.log("CACCSACACAS before break === " )
- try{
-const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.5 });
-    console.log("CACCSACACAS === " , result)
-    if (!result.canceled) setProfileImage(result?.assets[0]?.uri);
- }
- catch(err){
-   console.log("Camera error:", err);
- }
-    
+    console.log("CACCSACACAS before break === ")
+    try {
+      const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.5 });
+      console.log("CACCSACACAS === ", result)
+      if (!result.canceled) setProfileImage(result?.assets[0]?.uri);
+    }
+    catch (err) {
+      console.log("Camera error:", err);
+    }
+
   };
 
   const pickFromGallery = async () => {
     console.log("its inside enter")
-     await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    console.log("permission given or run",perm);
+    console.log("permission given or run", perm);
     if (!perm.granted) return showToast("error", "Gallery access Required");
 
     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
@@ -277,23 +290,26 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
   };
 
   const openImagePickerOptions = () => {
-  openSheet();
+    openSheet();
   };
 
   /* --------------------- Submit --------------------- */
-  
+
   const onSubmit = async (data: FormValues) => {
     if (!isModified) return showToast("info", "No changes detected");
 
     setUpdating(true);
     const safeImage = profileImage ?? "";
     try {
-      await updateUser({ ...data, phone: `+${callingCode}-${data.phone}`, image: profileImage });
+      const phone = data.phone && data.phone.trim().length > 0
+        ? `+${callingCode}-${data.phone}`
+        : "";
+      await updateUser({ ...data, phone, image: profileImage });
       showToast("success", "Profile updated");
 
-      originalRef.current = { ...data, phone: data.phone, callingCode, image: profileImage  };
+      originalRef.current = { ...data, phone: data.phone || "", callingCode, image: profileImage };
 
-     
+
       userEvent.emit("profileUpdated", { name: `${data.firstName} ${data.lastName}`, image: profileImage });
     } catch {
       showToast("error", "Failed to update profile");
@@ -329,9 +345,9 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
               control={control}
               name="firstName"
               render={({ field: { value, onChange, onBlur } }) => (
-                   <View style={styles.inputWrapper}>
-                <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
-                <EvilIcons name="user" size={22} color="#A9A9A9" />
+                <View style={styles.inputWrapper}>
+                  <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
+                  <EvilIcons name="user" size={22} color="#A9A9A9" />
                 </View>
               )}
             />
@@ -342,15 +358,18 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
               control={control}
               name="lastName"
               render={({ field: { value, onChange, onBlur } }) => (
-                 <View style={styles.inputWrapper}>
-                <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
-                <EvilIcons name="user" size={22} color="#A9A9A9" />
+                <View style={styles.inputWrapper}>
+                  <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
+                  <EvilIcons name="user" size={22} color="#A9A9A9" />
                 </View>
               )}
             />
-            
-  {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
-            <Text style={styles.label}>Phone Number</Text>
+
+            {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
+            <Text style={styles.label}>
+              Phone Number{" "}
+              <Text style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}>(Optional)</Text>
+            </Text>
             <Controller
               control={control}
               name="phone"
@@ -377,7 +396,7 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
       </TouchableWithoutFeedback>
 
       {/* --------------------- Android Bottom Sheet --------------------- */}
-     <Modal visible={showSheet} transparent animationType="fade">
+      <Modal visible={showSheet} transparent animationType="fade">
         <TouchableOpacity style={styles.overlay} onPress={closeSheet} />
 
         <Animated.View
@@ -387,10 +406,10 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
             style={styles.optionBtn}
             onPress={() => {
               closeSheet();
-               setTimeout(() => {
-      pickFromCamera();
-    }, 300);
-              
+              setTimeout(() => {
+                pickFromCamera();
+              }, 300);
+
             }}
           >
             <Text style={styles.optionText}>Take Photo</Text>
@@ -401,9 +420,9 @@ const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspec
             onPress={() => {
               closeSheet();
               setTimeout(() => {
-      pickFromGallery();
-    }, 300);
-             
+                pickFromGallery();
+              }, 300);
+
             }}
           >
             <Text style={styles.optionText}>Choose from Gallery</Text>

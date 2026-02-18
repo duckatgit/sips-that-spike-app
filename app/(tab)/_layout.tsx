@@ -180,7 +180,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen name="log" options={{ title: "Log" }} />
-      <Tabs.Screen name="learn" options={{ title: "Learn" }} />
+      {/* <Tabs.Screen name="learn" options={{ title: "Learn" }} /> */}
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
       <Tabs.Screen
         name="scan"
@@ -205,7 +205,7 @@ function CustomTabBar({ state, handlePress, scan }: CustomTabBarProps) {
   const tabs = [
     { name: "home", label: "Home", icon: "home-outline" },
     { name: "log", label: "Log", icon: "book-outline" },
-    { name: "learn", label: "Learn", icon: "school-outline" },
+    // { name: "learn", label: "Learn", icon: "school-outline" },
     { name: "profile", label: "Profile", icon: "person-outline" },
   ] as const;
 

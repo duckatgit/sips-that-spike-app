@@ -28,26 +28,34 @@ export const signUpSchema = z.object({
     .min(1, "First name is required")
     .max(40, "Name must be less than 40 characters")
     .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
-   .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
 
   lastName: z
     .string()
     .min(1, "Last name is required")
     .max(40, "Last name must be less than 40 characters")
-    
-    .refine((val) => !val || !val.startsWith(" "), "Cannot start with a space")
-     .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
+    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
   email: z
     .string()
     .min(1, "Email is required")
     .email("Enter a valid email address")
     .refine((val) => !val.startsWith(" "), "Cannot start with a space"),
   phone: z
-    .string()
-    .nonempty("Phone number is required")
-    .min(8, "Not less than 8 digits")
-     .max(15, "Not more than 15 digits")
-     .regex(/^[0-9]{8,15}$/, "Enter a valid phone number"),
+    .union([z.string(), z.undefined()])
+    .transform((val) => (val === "" ? undefined : val))
+    .refine(
+      (val) => !val || val.length >= 8,
+      "Not less than 8 digits"
+    )
+    .refine(
+      (val) => !val || val.length <= 15,
+      "Not more than 15 digits"
+    )
+    .refine(
+      (val) => !val || /^[0-9]{8,15}$/.test(val),
+      "Enter a valid phone number"
+    ),
   password: z
     .string()
     .min(1, "Password is required")
@@ -61,7 +69,7 @@ export const signUpSchema = z.object({
         /[^A-Za-z0-9]/.test(val),
       "Password must include uppercase, number, and special character"
     ),
-    callingCode: z.string().min(1),
+  callingCode: z.string().optional(),
 });
 
 type SignUpData = z.infer<typeof signUpSchema>;
@@ -69,30 +77,30 @@ type SignUpData = z.infer<typeof signUpSchema>;
 // ----------------------
 // Phone Input Component
 // ----------------------
-function PhoneInput({ value, onChange,onCallingCodeChange }: any) {
+function PhoneInput({ value, onChange, onCallingCodeChange }: any) {
   const [countryCode, setCountryCode] = useState("IN");
   const [callingCode, setCallingCode] = useState("91");
   const [localPhone, setLocalPhone] = useState(value || "");
   const [showPicker, setShowPicker] = useState(false);
-const [didType, setDidType] = useState(false);
+  const [didType, setDidType] = useState(false);
   const onSelect = (country: Country) => {
-    const code=country.callingCode[0]||"";
-    console.log("code",code);
+    const code = country.callingCode[0] || "";
+    console.log("code", code);
     setCountryCode(country.cca2);
     setCallingCode(country.callingCode[0] || "");
-     onCallingCodeChange(code);
+    onCallingCodeChange(code);
     setShowPicker(false);
   };
 
- 
+
   useEffect(() => {
-  if (!didType) return;
+    if (!didType) return;
 
 
-  const digitsOnly = localPhone.replace(/\D/g, "");
+    const digitsOnly = localPhone.replace(/\D/g, "");
 
-  onChange(digitsOnly);
-}, [localPhone]);
+    onChange(digitsOnly);
+  }, [localPhone]);
 
 
   return (
@@ -127,7 +135,7 @@ const [didType, setDidType] = useState(false);
         // onChangeText={setLocalPhone}
         onChangeText={(t) => {
           setDidType(true);   // 🔥 now start validation only after typing
-            setLocalPhone(t.replace(/\D/g, ""));
+          setLocalPhone(t.replace(/\D/g, ""));
         }}
         keyboardType="phone-pad"
         placeholderTextColor="#88767F"
@@ -145,7 +153,7 @@ export default function SignUpScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-const { showToast } = useToast();
+  const { showToast } = useToast();
   const {
     control,
     handleSubmit,
@@ -159,62 +167,63 @@ const { showToast } = useToast();
       firstName: "",
       lastName: "",
       email: "",
-      phone: "",
+      phone: undefined,
       password: "",
-       callingCode: "91",
+      callingCode: "91",
     },
   });
   const showToastNotification = (type: string, msg: string) => {
     console.log("EEERERERERERE", type);
-//  showToast(type, msg);
+    //  showToast(type, msg);
 
- showToast(type, msg)
- 
+    showToast(type, msg)
+
   };
 
 
 
 
   const onSubmit = async (data: SignUpData) => {
-    console.log("data",data);
-    const{callingCode, ...rest}=data;
-  setLoading(true);
-  const payload={
-    ...rest,
-    phone:`+${data.callingCode}-${data.phone}`
-  }
-  console.log("payload",payload);
-  try {
-    const result = await Signup(payload);
-    console.log("result", result);
-    setLoading(false);
+    console.log("data", data);
+    const { callingCode, phone, ...rest } = data;
+    setLoading(true);
+    const payload: any = { ...rest };
+    if (phone && phone.trim().length > 0) {
+      payload.phone = `+${callingCode}-${phone}`;
+    }
+    console.log("payload", payload);
+    try {
+      const result = await Signup(payload);
+      console.log("result", result);
+      setLoading(false);
       reset(),
-      showToastNotification(
-        "success",
-        result.message ? result.message : "Account Created Successfully!"
-      );
+        showToastNotification(
+          "success",
+          result.message ? result.message : "Account Created Successfully!"
+        );
       setTimeout(() => {
         router.replace({
           pathname: "/otpVerifyScreen",
           params: { email: data.email },
         });
-      }, 500); 
-  } catch (err: any) {
-    setLoading(false);
-     showToastNotification("error", err?.message || "signup failed");
-  }
-};
+      }, 500);
+    } catch (err: any) {
+      console.log("err satyam", err)
+      setLoading(false);
+      showToastNotification("error", err?.message || "signup failed");
+    }
+  };
 
   const trimStart = (t: string) => t.trimStart();
-console.log("errors",errors);
-  
+  console.log("errors", errors);
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F7F6F8" }}>
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
-         
+
         enableOnAndroid
         extraScrollHeight={120}
         keyboardShouldPersistTaps="handled"
@@ -254,7 +263,9 @@ console.log("errors",errors);
 
           {/* LAST NAME */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>
+              Last Name <Text style={styles.star}>*</Text>
+            </Text>
             <Controller
               name="lastName"
               control={control}
@@ -271,7 +282,7 @@ console.log("errors",errors);
                 </View>
               )}
             />
-             {errors.lastName && (
+            {errors.lastName && (
               <Text style={styles.error}>{errors.lastName.message}</Text>
             )}
           </View>
@@ -307,15 +318,16 @@ console.log("errors",errors);
           {/* PHONE */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
-              Phone Number <Text style={styles.star}>*</Text>
+              Phone Number{" "}
+              <Text style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}>(Optional)</Text>
             </Text>
             <Controller
               control={control}
               name="phone"
               render={({ field: { value, onChange } }) => (
-                <PhoneInput value={value} onChange={onChange}  onCallingCodeChange={(code: string) =>
-        setValue("callingCode", code)
-      }/>
+                <PhoneInput value={value} onChange={onChange} onCallingCodeChange={(code: string) =>
+                  setValue("callingCode", code)
+                } />
               )}
             />
             {errors.phone && (
@@ -376,16 +388,16 @@ console.log("errors",errors);
               )}
             </TouchableOpacity>
 
-                          </LinearGradient>
-              <Text style={styles.signupText}>
-                          Already have an account?{" "}
-                          <Text
-                            style={styles.signupLink}
-                            onPress={() => router.push("/signin")}
-                          >
-                            Sign In
-                          </Text>
-                        </Text>
+          </LinearGradient>
+          <Text style={styles.signupText}>
+            Already have an account?{" "}
+            <Text
+              style={styles.signupLink}
+              onPress={() => router.push("/signin")}
+            >
+              Sign In
+            </Text>
+          </Text>
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
