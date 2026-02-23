@@ -1,66 +1,70 @@
-export const  Privicydata = [
+export const Privicydata = [
   {
     q1: "Consent",
-    a1: "By using the Service, you agree to the Informed Consent document included in this Agreement. This document explains the risks, benefits, and limitations of receiving healthcare through telehealth. Telehealth involves electronic communication between you and a provider who may be in a different location and may not be appropriate for every medical situation. Your continued use of the Service confirms your acceptance of the Patient Consent as part of these Terms of Use and the Privacy Policy."
+    a1: "By using the Sips That Spike app, you agree to the terms outlined in this Privacy Policy and our Terms of Use. This document explains how we collect, use, and protect your information. Your continued use of the app confirms your acceptance of these terms. If you do not agree, please discontinue use of the app.",
   },
   {
-    q2: "Suitability of Telemedicine",
-    a2: "Telemedicine may not be suitable for all medical conditions or healthcare needs. Certain symptoms or concerns may require an in-person physical examination or alternative forms of treatment. If a provider determines that your condition cannot be appropriately treated through telemedicine, you will be informed and provided with guidance on the next recommended steps for care."
+    q2: "Information We Collect",
+    a2: "We collect information you provide directly, such as your name, email address, and optional phone number during account creation. We also collect information generated through your use of the app, including drinks you scan, nutritional data you enter manually, and your daily sugar intake logs. We do not collect sensitive personal health data beyond what you voluntarily enter into the app.",
+  },
+
+  // ─── CORRECTED: Only Open Food Facts — no OpenAI/GPT-4 ───────────────────
+  {
+    q4: "Third-Party Data Services",
+    a4: "IMPORTANT DISCLAIMER:\nSips That Spike is intended for informational and educational purposes only. It does not provide medical advice, diagnosis, treatment, or professional healthcare recommendations. All informational nutritional indicators and calorie calculations are simplified approximations designed to provide general awareness only and should not be considered medical or clinical guidance. Users should consult a qualified healthcare professional for any medical concerns.\n\n────────────────────────\nOpen Food Facts (Nutritional Database)\n────────────────────────\nWhen you scan a drink barcode, the barcode number is sent to the Open Food Facts public database to retrieve nutritional information such as sugar content, calories, and serving size.\n\nData sent to Open Food Facts:\n• Barcode number only\n\nThe following is NEVER sent to Open Food Facts:\n• Your name or email address\n• Your phone number\n• Your location data\n• Any personal account information\n\nNutritional information displayed in the app is sourced from the Open Food Facts public database.\nData Source: https://world.openfoodfacts.org/\n\nOpen Food Facts is a non-profit open-source food database. They do not receive any personal information from our app. Their privacy policy is available at: https://world.openfoodfacts.org/privacy\n\nYou will be asked for explicit consent before any barcode data is transmitted. If you decline, scan-based features will be unavailable but manual entry features will continue to function normally.",
+  },
+  // ─────────────────────────────────────────────────────────────────────────
+
+  {
+    q5: "How We Use Your Information",
+    a5: "We use the information we collect to provide and improve the Sips That Spike service, including tracking your daily sugar intake, showing informational product comparisons, and displaying your nutrition tracking statistics. We use your email address to manage your account and send important service-related communications. We do not sell your personal information to any third party.",
   },
   {
-    q3: "Your Representations",
-    a3: "By accessing or using the Service, you represent and confirm that you are at least 18 years old or have reached the age of majority in your jurisdiction. You also confirm that you are physically located in the same state as the shipping address associated with your account during consultations. Additionally, you agree to provide truthful, accurate, and complete information, keep your details updated, and only share information that you are legally authorized to provide."
+    q6: "Data Sharing & Third-Party Services",
+    a6: "We do not sell, rent, or share your personal information with third parties for marketing purposes. We may share limited data with trusted third-party service providers who assist in operating our app, including cloud hosting and analytics providers, strictly for the purpose of delivering the Service. Any third party with whom we share data is required to maintain the same or equivalent level of data protection as described in this Privacy Policy.",
   },
   {
-    q4: "Your Relationship with the Pharmacy",
-    a4: "The Service enables access to prescription fulfillment and products provided by Empower Pharmacy. By using the Service, you acknowledge that pharmacy-related services are governed by this Agreement and that the Pharmacy is a third-party beneficiary. Sips that Spike does not oversee or control the professional services of the Pharmacy, which remain solely the Pharmacy’s responsibility. Any purchase creates a direct customer relationship between you and the Pharmacy."
+    q7: "Nutritional Data Source",
+    a7: "Nutritional information displayed in the app is sourced from the Open Food Facts public database (https://world.openfoodfacts.org/). All informational nutritional indicators and calorie calculations are simplified approximations designed to provide general awareness only and should not be considered medical or clinical guidance. This app is intended for informational and educational purposes only. It does not provide medical advice, diagnosis, treatment, or professional healthcare recommendations. Users should consult a qualified healthcare professional for any medical concerns.",
   },
   {
-    q5: "Reimbursement & Payment",
-    a5: "All services and products offered through the Service are provided on a self-pay basis and are not eligible for coverage under insurance plans, Medicare, or Medicaid. You are fully responsible for paying all associated costs at the time of service or purchase. No claims will be submitted on your behalf for reimbursement from any third-party payer."
+    q8: "Data Retention & Deletion",
+    a8: "We retain your account data for as long as your account is active. You may delete your account at any time from the Profile screen inside the app. Upon account deletion, your personal information and drink logs will be permanently removed from our systems within 30 days. You may also request deletion of your data by contacting us directly.",
   },
   {
-    q6: "Prescription Products",
-    a6: "Certain products available through the Service require a consultation with a licensed healthcare provider. If a prescription is approved, it may be fulfilled through the partnered Pharmacy or another pharmacy of your choosing. If you select a non-partner pharmacy, you are solely responsible for payment, coordination, and pickup of the prescription."
+    q9: "User Responsibilities",
+    a9: "You are responsible for providing complete and accurate information when using the Service. You must maintain the necessary devices, software, and internet connectivity required to access the Service. You also agree to safeguard your login credentials and ensure they are not shared with unauthorized individuals.",
   },
   {
-    q7: "User Responsibilities",
-    a7: "You are responsible for providing complete and accurate information when using the Service. You must maintain the necessary devices, software, and internet connectivity required to access the Service and cover any related costs. You also agree to safeguard your login credentials and ensure they are not shared with unauthorized individuals."
+    q10: "Accounts & Security",
+    a10: "To use the Service, you must create and maintain an active account with up-to-date information. You are responsible for all activities conducted under your account, including any unauthorized access resulting from your failure to protect your credentials. Please notify us promptly of any suspected security breaches.",
   },
   {
-    q8: "Accounts & Security",
-    a8: "To use the Service, you must create and maintain an active account with up-to-date information. You are responsible for all activities conducted under your account, including any unauthorized access resulting from your failure to protect your credentials. Promptly notify the Service of any suspected security breaches."
+    q11: "Use of the Service",
+    a11: "The Service is intended for your personal, non-commercial use only. All materials, content, software, and technology associated with the Service are owned by Sips That Spike or its licensors and are protected by applicable intellectual property laws.",
   },
   {
-    q9: "Use of the Service",
-    a9: "The Service is intended for your personal, non-commercial use only. All materials, content, software, and technology associated with the Service are owned by Sips that Spike or its licensors and are protected by applicable intellectual property laws."
+    q12: "Prohibited Conduct",
+    a12: "You agree not to misuse the Service in any manner, including violating applicable laws or regulations, attempting unauthorized access to systems, uploading malicious or harmful content, or engaging in behavior that disrupts or interferes with other users or the proper functioning of the Service.",
   },
   {
-    q10: "Prohibited Conduct",
-    a10: "You agree not to misuse the Service in any manner, including violating applicable laws or regulations, attempting unauthorized access to systems, uploading malicious or harmful content, or engaging in behavior that disrupts or interferes with other users or the proper functioning of the Service."
+    q13: "Third-Party Services",
+    a13: "Certain features of the app rely on third-party services such as the Open Food Facts nutritional database and cloud hosting providers. Sips That Spike does not control and is not responsible for the independent actions or privacy practices of these third parties beyond what is described in this Privacy Policy.",
   },
   {
-    q11: "Third-Party Services",
-    a11: "Certain products or services made available through the Service may be provided by third parties, including pharmacies and other partners. Sips that Spike does not control and is not responsible for the actions, services, or disputes involving these third parties."
+    q14: "Disclaimers & Liability",
+    a14: "The Service is provided on an 'as is' and 'as available' basis without warranties of any kind. To the fullest extent permitted by law, Sips That Spike disclaims all express and implied warranties and limits its liability for any damages arising from your use of the Service.",
   },
   {
-    q12: "Termination",
-    a12: "Clinical services provided through the Service may be discontinued with notice when appropriate. Access to products or other non-clinical features may be terminated at any time. Certain provisions of this Agreement, including legal and liability-related terms, will continue to apply even after termination."
+    q15: "Indemnification",
+    a15: "You agree to indemnify, defend, and hold harmless Sips That Spike from any claims, losses, damages, or expenses arising out of your use of the Service, your violation of this Agreement, or your infringement of any rights of another party.",
   },
   {
-    q13: "Disclaimers & Liability",
-    a13: "The Service is provided on an “as is” and “as available” basis without warranties of any kind. To the fullest extent permitted by law, Sips that Spike disclaims all express and implied warranties and limits its liability for any damages arising from your use of the Service."
+    q16: "Communications",
+    a16: "By using the Service, you consent to receive communications, notices, and disclosures electronically. These may include important updates related to your account, services, or changes to this Agreement. You may opt out of non-essential communications at any time.",
   },
   {
-    q14: "Indemnification",
-    a14: "You agree to indemnify, defend, and hold harmless Sips that Spike from any claims, losses, damages, or expenses arising out of your use of the Service, your violation of this Agreement, or your infringement of any rights of another party."
+    q17: "Dispute Resolution",
+    a17: "If a dispute arises regarding the Service, we encourage users to contact us first so we can attempt to resolve the issue informally. Any legal disputes will be handled in accordance with applicable local laws and regulations.",
   },
-  {
-    q15: "Communications",
-    a15: "By using the Service, you consent to receive communications, notices, and disclosures electronically. These communications may include important updates related to your account, services, or changes to this Agreement."
-  },
-  {
-    q16: "Dispute Resolution",
-    a16: "Any disputes or claims related to the Service or this Agreement will be resolved through binding arbitration rather than through court proceedings. You agree that disputes will be handled on an individual basis, and class actions or collective proceedings are not permitted."
-  }
 ];

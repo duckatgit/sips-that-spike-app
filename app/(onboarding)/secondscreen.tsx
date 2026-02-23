@@ -17,7 +17,7 @@ const W = (n:any) => (width / 375) * n;
 const H = (n:any) => (height / 812) * n;
 export default function ThirdScreen() {
   const routes = useRouter();
-  const skip = () => routes.replace("./components/test");
+  const skip = () => routes.replace("/test");
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>

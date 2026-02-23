@@ -1,4 +1,3 @@
-
 import DeleteAccount from "@/components/DeleteAccountPopup";
 import SignoutPopup from "@/components/SignoutPopup";
 import { deleteUser, getAllScansDataByUsers, getuserbyid } from "@/service/Api";
@@ -18,7 +17,7 @@ import {
   Pressable,
   ScrollView,
   Text,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScaledSheet } from "react-native-size-matters";
@@ -32,7 +31,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(false); // logout loader
   const [profileLoading, setProfileLoading] = useState(true); // page loading
   const { showToast } = useToast();
-  const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] = useState(false);
+  const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] =
+    useState(false);
   const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false);
   const [data, setData] = useState<UserData>({
     name: "",
@@ -41,19 +41,26 @@ export default function Profile() {
   });
 
   const [allScansData, setAllScansData] = useState<any>({
-    totalCalories: '',
-    totalSugar: '',
-    healthyChoice: '',
-    totalScans: '',
-    dailySugarIntake: '',
-    dayStreak: ''
+    totalCalories: "",
+    totalSugar: "",
+    healthyChoice: "",
+    totalScans: "",
+    dailySugarIntake: "",
+    dayStreak: "",
   });
 
   const LinearProgress = ({ value, max }: any) => {
     const percent = Math.min((value / max) * 100, 100);
 
     return (
-      <View style={{ width: "100%", height: 12, backgroundColor: "#eee", borderRadius: 10 }}>
+      <View
+        style={{
+          width: "100%",
+          height: 12,
+          backgroundColor: "#eee",
+          borderRadius: 10,
+        }}
+      >
         <View
           style={{
             width: `${percent}%`,
@@ -70,8 +77,7 @@ export default function Profile() {
     console.log("EEERERERERERE", type);
     //  showToast(type, msg);
 
-    showToast(type, msg)
-
+    showToast(type, msg);
   };
   // ============================
   // FETCH USER DATA
@@ -90,8 +96,8 @@ export default function Profile() {
         healthyChoice: res.result.healthyChoice,
         totalScans: res.result.totalScans,
         totalSugar: res.result.totalSugar,
-        dayStreak: res.result.dayStreak
-      })
+        dayStreak: res.result.dayStreak,
+      });
       console.log("User Data:", user);
 
       setData({
@@ -113,14 +119,13 @@ export default function Profile() {
     useCallback(() => {
       console.log("Profile screen opened → fetching...");
       getData();
-    }, [])
+    }, []),
   );
 
   // ============================
   // LOGOUT FUNCTION
   // ============================
   const onLogout = async () => {
-
     setLoading(true);
     try {
       await AsyncStorage.multiRemove(["token", "userId", "role", "name"]);
@@ -130,8 +135,6 @@ export default function Profile() {
     } catch (error) {
       console.error("Logout Error:", error);
       showToastNotification("error", "Something went wrong!");
-
-
     } finally {
       setLoading(false);
     }
@@ -148,12 +151,16 @@ export default function Profile() {
         setIsDeleteAccount(false);
       }
     } catch (error: any) {
-      showToastNotification("error", error?.response?.data?.message || error?.data?.message || "Something went wrong!");
+      showToastNotification(
+        "error",
+        error?.response?.data?.message ||
+          error?.data?.message ||
+          "Something went wrong!",
+      );
     } finally {
       setLoading(false);
     }
-
-  }
+  };
 
   // ============================
   // PAGE LOADER WHILE GETTING PROFILE
@@ -180,16 +187,19 @@ export default function Profile() {
   // ============================
   // MAIN UI RENDER
   // ============================
-  console.log("allscandata", allScansData)
+  console.log("allscandata", allScansData);
   return (
     // <SafeAreaView style={styles.container}>
     <ScrollView
-      contentContainerStyle={{ paddingBottom: 150, backgroundColor: "white", justifyContent: "center", alignItems: "center", }}
+      contentContainerStyle={{
+        paddingBottom: 150,
+        backgroundColor: "white",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
-
-
         <View style={styles.first}>
           <View style={styles.second}>
             <View style={styles.imgdiv}>
@@ -204,9 +214,7 @@ export default function Profile() {
                   }}
                 />
               ) : (
-
                 <View style={styles.imgbord}>
-
                   <Image
                     source={require("../../assets/images/blankdp.png")}
                     style={{
@@ -214,8 +222,6 @@ export default function Profile() {
                       height: "100%",
                       resizeMode: "contain",
                       alignSelf: "flex-start",
-
-
                     }}
                   />
                 </View>
@@ -230,14 +236,12 @@ export default function Profile() {
       : data.name
     : "User"}
 </Text> */}
-              <Text
-                style={styles.name}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
+              <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
                 {data?.name || "User"}
               </Text>
-              <Text style={styles.email}>{data.email ? data.email : "user@gmail.com"}</Text>
+              <Text style={styles.email}>
+                {data.email ? data.email : "user@gmail.com"}
+              </Text>
             </View>
           </View>
 
@@ -294,7 +298,10 @@ export default function Profile() {
                 </View>
                 <View style={styles.box3}>
                   <Text style={styles.total}>
-                    {allScansData.totalSugar ? allScansData.totalSugar.toFixed(2) : "0.00"}g
+                    {allScansData.totalSugar
+                      ? allScansData.totalSugar.toFixed(2)
+                      : "0.00"}
+                    g
                   </Text>
 
                   <Text style={styles.tscan}>Total Sugar</Text>
@@ -324,8 +331,6 @@ export default function Profile() {
           </View>
         </View>
 
-
-
         <View style={styles.ten}>
           <View style={styles.nine}>
             <View style={styles.eight}>
@@ -342,9 +347,11 @@ export default function Profile() {
               <Text>Healthy choice</Text>
               {/* <Text>{healthyChoice && allScansData.totalScans?(healthyChoice/allScansData.totalScans).toFixed(2):''}</Text> */}
               {/* one correct for decimal show */}
-              <Text>{allScansData.totalScans > 0
-                ? (healthyChoice / allScansData.totalScans).toFixed(2)
-                : ''}</Text>
+              <Text>
+                {allScansData.totalScans > 0
+                  ? (healthyChoice / allScansData.totalScans).toFixed(2)
+                  : ""}
+              </Text>
             </View>
 
             {/* Dynamic Progress Bar */}
@@ -365,7 +372,11 @@ export default function Profile() {
               <View style={styles.statstitlesfirsti}>
                 <View style={styles.hell}>
                   <View style={styles.bell}>
-                    <MaterialIcons name="local-police" size={16} color="black" />
+                    <MaterialIcons
+                      name="local-police"
+                      size={16}
+                      color="black"
+                    />
                   </View>
                   <Text style={styles.note}>Terms & Conditions</Text>
                 </View>
@@ -387,11 +398,7 @@ export default function Profile() {
                 </View>
 
                 <View style={styles.next}>
-                  <FontAwesome6
-                    name="greater-than"
-                    size={12}
-                    color="#B3B3B3"
-                  />
+                  <FontAwesome6 name="greater-than" size={12} color="#B3B3B3" />
                 </View>
               </View>
             </Pressable>
@@ -401,7 +408,7 @@ export default function Profile() {
         {/* ============================
           SUPPORT SECTION (UI SAME)
         ============================ */}
-        <View style={styles.statstsio}>
+        {/* <View style={styles.statstsio}>
           <View style={styles.statstitles}>
             <Text style={styles.statsText}>Support</Text>
           </View>
@@ -418,11 +425,7 @@ export default function Profile() {
                 </View>
 
                 <View style={styles.next}>
-                  <FontAwesome6
-                    name="greater-than"
-                    size={12}
-                    color="#B3B3B3"
-                  />
+                  <FontAwesome6 name="greater-than" size={12} color="#B3B3B3" />
                 </View>
               </View>
             </Pressable>
@@ -438,16 +441,12 @@ export default function Profile() {
                 </View>
 
                 <View style={styles.next}>
-                  <FontAwesome6
-                    name="greater-than"
-                    size={12}
-                    color="#B3B3B3"
-                  />
+                  <FontAwesome6 name="greater-than" size={12} color="#B3B3B3" />
                 </View>
               </View>
             </Pressable>
           </View>
-        </View>
+        </View> */}
 
         {/* ============================
           LOGOUT BUTTON WITH LOADER
@@ -481,13 +480,25 @@ export default function Profile() {
           )}
         </Pressable>
       </View>
-      {isDeleteAccount && <DeleteAccount visible={isDeleteAccount} isLoading={loading} onCancel={() => setIsDeleteAccount(false)} onConfirm={onDeleteAccount} />}
-      {isSignOutConfirmationOpen && <SignoutPopup visible={isSignOutConfirmationOpen} onCancel={() => setIsSignOutConfirmationOpen(false)} onConfirm={onLogout} />}
+      {isDeleteAccount && (
+        <DeleteAccount
+          visible={isDeleteAccount}
+          isLoading={loading}
+          onCancel={() => setIsDeleteAccount(false)}
+          onConfirm={onDeleteAccount}
+        />
+      )}
+      {isSignOutConfirmationOpen && (
+        <SignoutPopup
+          visible={isSignOutConfirmationOpen}
+          onCancel={() => setIsSignOutConfirmationOpen(false)}
+          onConfirm={onLogout}
+        />
+      )}
     </ScrollView>
     // </SafeAreaView>
   );
 }
-
 
 export const styles = ScaledSheet.create({
   /* ---- Main Container ---- */
@@ -572,7 +583,7 @@ export const styles = ScaledSheet.create({
     borderRadius: "10@ms",
     justifyContent: "space-evenly",
     alignItems: "center",
-    paddingHorizontal: "3@ms"
+    paddingHorizontal: "3@ms",
   },
 
   fourth: {
@@ -581,7 +592,7 @@ export const styles = ScaledSheet.create({
     justifyContent: "center",
     // borderWidth:1,
     // borderColor:"black",
-    gap: "3@ms"
+    gap: "3@ms",
   },
 
   name: {
@@ -616,7 +627,7 @@ export const styles = ScaledSheet.create({
     fontSize: "18@ms",
     color: "#1B1919",
     marginBottom: "10@ms",
-    lineHeight: 30
+    lineHeight: 30,
   },
 
   status: {
@@ -736,7 +747,6 @@ export const styles = ScaledSheet.create({
     // borderColor: "black",
     justifyContent: "center",
   },
-
 
   statstitlesyi: {
     width: "100%",

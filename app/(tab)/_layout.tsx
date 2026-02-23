@@ -1,4 +1,3 @@
-
 import { getuserbyid } from "@/service/Api";
 import { userEvent } from "@/utils/events";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -72,11 +71,10 @@ export default function TabLayout() {
   useFocusEffect(
     useCallback(() => {
       getData();
-    }, [])
+    }, []),
   );
 
   return (
-
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
@@ -113,15 +111,20 @@ export default function TabLayout() {
           </View>
         ),
       }}
-      tabBar={(props) => <CustomTabBar {...props} handlePress={handlePress} scan={scan} />}
+      tabBar={(props) => (
+        <CustomTabBar {...props} handlePress={handlePress} scan={scan} />
+      )}
     >
       <Tabs.Screen
         name="home"
         options={{
           headerTitle: () => (
             <View>
-              <Text style={styles.headerTitle} numberOfLines={1}
-                ellipsizeMode="tail">
+              <Text
+                style={styles.headerTitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {data?.name
                   ? data.name.length > 20
                     ? data.name.slice(0, 10) + "..."
@@ -133,8 +136,10 @@ export default function TabLayout() {
               </Text>
               <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <Text>
-                  <Text style={{ textDecorationLine: 'none' }}>Note: </Text>
-                  <Text style={{ textDecorationLine: 'underline', color: 'blue' }}>
+                  <Text style={{ textDecorationLine: "none" }}>Note: </Text>
+                  <Text
+                    style={{ textDecorationLine: "underline", color: "blue" }}
+                  >
                     Disclaimer & Data Source
                   </Text>
                 </Text>
@@ -150,26 +155,43 @@ export default function TabLayout() {
                   <View style={styles.modalContainer}>
                     <ScrollView>
                       <Text style={styles.modalTitle}>Disclaimer</Text>
+
                       <Text style={styles.modalText}>
-                        This app is intended for informational and educational purposes only.
-                        It does not provide medical advice, diagnosis, treatment, or professional healthcare recommendations.
-                        Users should consult a qualified healthcare professional for any medical concerns.
+                        This application is provided for informational and
+                        educational purposes only. The content displayed in the
+                        app is not intended to provide medical advice,
+                        diagnosis, treatment, or healthcare recommendations.
                       </Text>
+
                       <Text style={styles.modalText}>
-                        Nutritional information displayed in the app is sourced from the Open Food Facts public database.
+                        Nutritional information shown in this app is sourced
+                        from the Open Food Facts public database and may be
+                        incomplete or inaccurate. Users should verify
+                        information independently when necessary.
                       </Text>
+
                       <Text
                         style={styles.linkText}
-                        onPress={() => Linking.openURL('https://world.openfoodfacts.org/')}
+                        onPress={() =>
+                          Linking.openURL("https://world.openfoodfacts.org/")
+                        }
                       >
-                        Data Source: https://world.openfoodfacts.org/
+                        Data provided by Open Food Facts —
+                        https://world.openfoodfacts.org/
                       </Text>
+
                       <Text style={styles.modalText}>
-                        All sugar spike estimations and calorie calculations are simplified approximations designed to provide general awareness and should not be considered medical or clinical guidance.
+                        Any scores, labels, or insights presented in the app are
+                        based solely on nutritional data and are intended for
+                        general informational use only. They should not be
+                        interpreted as medical, health, or clinical evaluations.
                       </Text>
                     </ScrollView>
 
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                    <TouchableOpacity
+                      style={styles.closeButton}
+                      onPress={() => setModalVisible(false)}
+                    >
                       <Text style={styles.closeText}>Close</Text>
                     </TouchableOpacity>
                   </View>
@@ -185,11 +207,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="scan"
         options={{
-          title: "AI Drink Scanner",
+          title: "Drink Scanner",
           headerShown: true,
         }}
       />
-      <SafeAreaView edges={['bottom']}></SafeAreaView>
+      <SafeAreaView edges={["bottom"]}></SafeAreaView>
     </Tabs>
   );
 }
@@ -229,7 +251,9 @@ function CustomTabBar({ state, handlePress, scan }: CustomTabBarProps) {
                 size={18}
                 color={focused ? "#fff" : "#444"}
               />
-              <Text style={[styles.label, { color: focused ? "#fff" : "#444" }]}>
+              <Text
+                style={[styles.label, { color: focused ? "#fff" : "#444" }]}
+              >
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -244,11 +268,7 @@ function CustomTabBar({ state, handlePress, scan }: CustomTabBarProps) {
             activeOpacity={0.85}
             onPress={() => handlePress("scan")}
           >
-            <AntDesign
-              name="scan"
-              size={20}
-              color={scan ? "white" : "black"}
-            />
+            <AntDesign name="scan" size={20} color={scan ? "white" : "black"} />
             <Text style={[styles.label, { color: scan ? "white" : "black" }]}>
               Scan
             </Text>
@@ -353,12 +373,27 @@ const styles = ScaledSheet.create({
     marginTop: "2@ms",
   },
 
-  modalBackground: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
-  modalContainer: { backgroundColor: 'white', borderRadius: 10, padding: 20, maxHeight: '80%' },
-  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10 },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
   modalText: { fontSize: 16, marginBottom: 10 },
-  linkText: { fontSize: 16, color: '#007AFF', textDecorationLine: 'underline', marginBottom: 10 },
-  closeButton: { marginTop: 10, alignSelf: 'center', padding: 10 },
-  closeText: { fontSize: 16, color: '#007AFF', fontWeight: 'bold' },
+  linkText: {
+    fontSize: 16,
+    color: "#007AFF",
+    textDecorationLine: "underline",
+    marginBottom: 10,
+  },
+  closeButton: { marginTop: 10, alignSelf: "center", padding: 10 },
+  closeText: { fontSize: 16, color: "#007AFF", fontWeight: "bold" },
   disclaimerText: { marginTop: 8 },
 });
