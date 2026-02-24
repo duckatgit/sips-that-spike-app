@@ -118,7 +118,7 @@ export default function log() {
         <View style={styles.textContainer}>
           <Text style={styles.title}>Today's Log</Text>
           <Text style={styles.date}>
-            {day}/{month}/{year}
+            {day}/{month+1}/{year}
           </Text>
         </View>
         <View style={styles.iconContainer}>
