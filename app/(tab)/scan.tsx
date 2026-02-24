@@ -316,7 +316,7 @@ export default function Scan() {
                 { color: activeButton === "drink" ? "#fff" : "#636363" },
               ]}
             >
-              AI Camera Scan
+              Camera Scan
             </Text>
           </Pressable>
 
@@ -554,7 +554,7 @@ export default function Scan() {
         }}
         onDecline={() => {
           setShowConsent(false);
-           handleScanPress("cane")
+          handleScanPress("cane");
         }}
       />
     </>
