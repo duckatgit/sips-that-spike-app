@@ -405,7 +405,7 @@ export default function Home(): JSX.Element {
           </View> */}
 
           {/* Bottom small cards */}
-          <View style={styles.bottomSection}>
+          {/* <View style={styles.bottomSection}>
             <Pressable
               style={({ pressed }) => [
                 styles.bottomContent,
@@ -419,7 +419,6 @@ export default function Home(): JSX.Element {
                 <Text style={styles.lowerText}>Sugar Education</Text>
               </View>
             </Pressable>
-            {/* </View> */}
 
             <Pressable
               style={({ pressed }) => [
@@ -434,7 +433,7 @@ export default function Home(): JSX.Element {
                 <Text style={styles.lowerText}>Better choices</Text>
               </View>
             </Pressable>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
       <AIConsentModal

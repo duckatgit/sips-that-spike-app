@@ -1,4 +1,3 @@
-
 import { Signup } from "@/service/Api";
 import { useToast } from "@/utils/useToastHook";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,7 +11,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import CountryPicker, { Country } from "react-native-country-picker-modal";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -28,14 +27,20 @@ export const signUpSchema = z.object({
     .min(1, "First name is required")
     .max(40, "Name must be less than 40 characters")
     .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
-    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine(
+      (val) => /^[A-Za-z ]+$/.test(val),
+      "Only alphabets and spaces are allowed",
+    ),
 
   lastName: z
     .string()
     .min(1, "Last name is required")
     .max(40, "Last name must be less than 40 characters")
     .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
-    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine(
+      (val) => /^[A-Za-z ]+$/.test(val),
+      "Only alphabets and spaces are allowed",
+    ),
   email: z
     .string()
     .min(1, "Email is required")
@@ -44,17 +49,11 @@ export const signUpSchema = z.object({
   phone: z
     .union([z.string(), z.undefined()])
     .transform((val) => (val === "" ? undefined : val))
-    .refine(
-      (val) => !val || val.length >= 8,
-      "Not less than 8 digits"
-    )
-    .refine(
-      (val) => !val || val.length <= 15,
-      "Not more than 15 digits"
-    )
+    .refine((val) => !val || val.length >= 8, "Not less than 8 digits")
+    .refine((val) => !val || val.length <= 15, "Not more than 15 digits")
     .refine(
       (val) => !val || /^[0-9]{8,15}$/.test(val),
-      "Enter a valid phone number"
+      "Enter a valid phone number",
     ),
   password: z
     .string()
@@ -67,9 +66,12 @@ export const signUpSchema = z.object({
         /[A-Z]/.test(val) &&
         /[0-9]/.test(val) &&
         /[^A-Za-z0-9]/.test(val),
-      "Password must include uppercase, number, and special character"
+      "Password must include uppercase, number, and special character",
     ),
   callingCode: z.string().optional(),
+  agreedToTerms: z.boolean().refine((val) => val === true, {
+    message: "You must agree to the Terms and Privacy Policy",
+  }),
 });
 
 type SignUpData = z.infer<typeof signUpSchema>;
@@ -92,16 +94,13 @@ function PhoneInput({ value, onChange, onCallingCodeChange }: any) {
     setShowPicker(false);
   };
 
-
   useEffect(() => {
     if (!didType) return;
-
 
     const digitsOnly = localPhone.replace(/\D/g, "");
 
     onChange(digitsOnly);
   }, [localPhone]);
-
 
   return (
     <View style={styles.phoneContainer}>
@@ -134,7 +133,7 @@ function PhoneInput({ value, onChange, onCallingCodeChange }: any) {
         value={localPhone}
         // onChangeText={setLocalPhone}
         onChangeText={(t) => {
-          setDidType(true);   // 🔥 now start validation only after typing
+          setDidType(true); // 🔥 now start validation only after typing
           setLocalPhone(t.replace(/\D/g, ""));
         }}
         keyboardType="phone-pad"
@@ -159,6 +158,7 @@ export default function SignUpScreen() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
@@ -167,21 +167,19 @@ export default function SignUpScreen() {
       firstName: "",
       lastName: "",
       email: "",
+
       phone: undefined,
       password: "",
       callingCode: "91",
+      agreedToTerms: false,
     },
   });
   const showToastNotification = (type: string, msg: string) => {
     console.log("EEERERERERERE", type);
     //  showToast(type, msg);
 
-    showToast(type, msg)
-
+    showToast(type, msg);
   };
-
-
-
 
   const onSubmit = async (data: SignUpData) => {
     console.log("data", data);
@@ -196,11 +194,11 @@ export default function SignUpScreen() {
       const result = await Signup(payload);
       console.log("result", result);
       setLoading(false);
-      reset(),
+      (reset(),
         showToastNotification(
           "success",
-          result.message ? result.message : "Account Created Successfully!"
-        );
+          result.message ? result.message : "Account Created Successfully!",
+        ));
       setTimeout(() => {
         router.replace({
           pathname: "/otpVerifyScreen",
@@ -208,22 +206,28 @@ export default function SignUpScreen() {
         });
       }, 500);
     } catch (err: any) {
-      console.log("err satyam", err)
+      console.log("err satyam", err);
       setLoading(false);
       showToastNotification("error", err?.message || "signup failed");
     }
   };
+  const agreedToTerms = watch("agreedToTerms");
+  const handleOpenTerms = () => {
+    router.push("/terms-conditions");
+  };
+
+  const handleOpenPrivacy = () => {
+    router.push("/privacy-policy");
+  };
 
   const trimStart = (t: string) => t.trimStart();
   console.log("errors", errors);
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F7F6F8" }}>
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
-
         enableOnAndroid
         extraScrollHeight={120}
         keyboardShouldPersistTaps="handled"
@@ -319,15 +323,23 @@ export default function SignUpScreen() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
               Phone Number{" "}
-              <Text style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}>(Optional)</Text>
+              <Text
+                style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}
+              >
+                (Optional)
+              </Text>
             </Text>
             <Controller
               control={control}
               name="phone"
               render={({ field: { value, onChange } }) => (
-                <PhoneInput value={value} onChange={onChange} onCallingCodeChange={(code: string) =>
-                  setValue("callingCode", code)
-                } />
+                <PhoneInput
+                  value={value}
+                  onChange={onChange}
+                  onCallingCodeChange={(code: string) =>
+                    setValue("callingCode", code)
+                  }
+                />
               )}
             />
             {errors.phone && (
@@ -370,6 +382,53 @@ export default function SignUpScreen() {
             )}
           </View>
 
+          <View style={styles.termsContainer}>
+            <Controller
+              control={control}
+              name="agreedToTerms"
+              render={({ field: { onChange, value } }) => (
+                <TouchableOpacity
+                  style={styles.checkboxContainer}
+                  onPress={() => onChange(!value)}
+                  activeOpacity={0.7}
+                >
+                  <View
+                    style={[styles.checkbox, value && styles.checkboxChecked]}
+                  >
+                    {value && (
+                      <Ionicons name="checkmark" size={16} color="#FFF" />
+                    )}
+                  </View>
+                  <Text style={styles.termsText}>
+                    I agree to the{" "}
+                    <Text
+                      style={styles.termsLink}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleOpenTerms();
+                      }}
+                    >
+                      Terms & Conditions
+                    </Text>{" "}
+                    and{" "}
+                    <Text
+                      style={styles.termsLink}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleOpenPrivacy();
+                      }}
+                    >
+                      Privacy Policy
+                    </Text>
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+            {errors.agreedToTerms && (
+              <Text style={styles.error}>{errors.agreedToTerms.message}</Text>
+            )}
+          </View>
+
           {/* SUBMIT */}
           <LinearGradient
             colors={["#D82370", "#D21D2B"]}
@@ -387,7 +446,6 @@ export default function SignUpScreen() {
                 <Text style={styles.signText}>Sign Up</Text>
               )}
             </TouchableOpacity>
-
           </LinearGradient>
           <Text style={styles.signupText}>
             Already have an account?{" "}
@@ -403,117 +461,3 @@ export default function SignUpScreen() {
     </SafeAreaView>
   );
 }
-
-// ----------------------
-// STYLES
-// ----------------------
-// const styles = StyleSheet.create({
-//    signupText: { textAlign: "center", fontSize: 14, color: "#866F7C", marginTop: 16 },
-//   signupLink: { color: "#D21E30", fontWeight: "bold" },
-
-//   container: {
-//     flex: 1,
-//     padding: 24,
-//     backgroundColor: "#F7F6F8",
-//   },
-//   title: {
-//     fontSize: 32,
-//     fontWeight: "bold",
-//     color: "#38242D",
-//     marginTop: 32,
-//     marginBottom: 8,
-//   },
-//   subtitle: {
-//     fontSize: 18,
-//     color: "#191014",
-//     marginBottom: 20,
-//   },
-//   inputGroup: {
-//     marginBottom: 12,
-//   },
-//   label: {
-//     fontSize: 15,
-//     fontWeight: "600",
-//     marginBottom: 4,
-//     color: "#38242D",
-//   },
-//   star: { color: "red" },
-//   inputWrap: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     backgroundColor: "#FFF",
-//     borderRadius: 8,
-//     borderWidth: 1,
-//     borderColor: "#EDE6EF",
-//     paddingHorizontal: 12,
-//   },
-//   input: {
-//     flex: 1,
-//     paddingVertical: 12,
-//     fontSize: 15,
-//     color: "#38242D",
-//   },
-//   phoneContainer: {
-//     height: 50,
-//     borderWidth: 1,
-//     borderColor: "#EDE6EF",
-//     borderRadius: 8,
-//     backgroundColor: "#FFF",
-//     flexDirection: "row",
-//     alignItems: "center",
-//     paddingHorizontal: 12,
-//   },
-//   flagBtn: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginRight: 8,
-//   },
-//   callingText: {
-//     fontSize: 15,
-//     color: "#38242D",
-//     fontWeight: "700",
-//     marginLeft: 4,
-//   },
-//   phoneInput: {
-//     flex: 1,
-//     fontSize: 15,
-//     color: "#38242D",
-//   },
-//   signinBtn: {
-//     borderRadius: 8,
-//     marginTop: 20,
-//   },
-//   signBtn: {
-//     paddingVertical: 14,
-//     alignItems: "center",
-//     borderRadius: 8,
-//   },
-//   signText: {
-//     color: "#FFF",
-//     fontSize: 17,
-//     fontWeight: "bold",
-//   },
-//   error: {
-//     color: "red",
-//     fontSize: 13,
-//     marginTop: 4,
-//   },
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

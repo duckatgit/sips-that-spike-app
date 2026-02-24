@@ -607,7 +607,7 @@ export const styles = ScaledSheet.create({
     fontSize: "10@ms",
     lineHeight: "14@ms",
     color: "#75748E",
-    textTransform: "capitalize",
+    // textTransform: "capitalize",
   },
   edit: {
     fontFamily: "Poppins_600SemiBold",

@@ -1,6 +1,11 @@
 import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
-   signupText: { textAlign: "center", fontSize: 14, color: "#866F7C", marginTop: 16 },
+  signupText: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "#866F7C",
+    marginTop: 16,
+  },
   signupLink: { color: "#D21E30", fontWeight: "bold" },
 
   container: {
@@ -89,5 +94,41 @@ export const styles = StyleSheet.create({
     color: "red",
     fontSize: 13,
     marginTop: 4,
+  },
+  // Add these styles to your existing styles object:
+
+  termsContainer: {
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#D21E30",
+    marginRight: 10,
+    marginTop: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#D21E30",
+    borderColor: "#D21E30",
+  },
+  termsText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#38242D",
+    lineHeight: 20,
+  },
+  termsLink: {
+    color: "#D21E30",
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
 });
