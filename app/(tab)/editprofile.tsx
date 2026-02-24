@@ -1,4 +1,3 @@
-
 import { getuserbyid, updateUser } from "@/service/Api";
 import { userEvent } from "@/utils/events";
 import { useToast } from "@/utils/useToastHook";
@@ -8,7 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import {
@@ -24,9 +29,14 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
-import CountryPicker, { Country, CountryCode, FlagType, getAllCountries } from "react-native-country-picker-modal";
+import CountryPicker, {
+  Country,
+  CountryCode,
+  FlagType,
+  getAllCountries,
+} from "react-native-country-picker-modal";
 import { z } from "zod";
 import { styles } from "./editprofile.styles";
 
@@ -39,7 +49,10 @@ const schema = z.object({
     .max(40, "Maximum 40 characters allowed")
     .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
     .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
-    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine(
+      (val) => /^[A-Za-z ]+$/.test(val),
+      "Only alphabets and spaces are allowed",
+    ),
   lastName: z
     .string()
     .nonempty("Last Name is required")
@@ -47,22 +60,25 @@ const schema = z.object({
     .max(40, "Maximum 40 characters allowed")
     .refine((val) => /^\S.*$/.test(val), "Cannot start with a space")
     .refine((val) => !/ {4,}/.test(val), "Only up to 3 spaces allowed")
-    .refine((val) => /^[A-Za-z ]+$/.test(val), "Only alphabets and spaces are allowed"),
+    .refine(
+      (val) => /^[A-Za-z ]+$/.test(val),
+      "Only alphabets and spaces are allowed",
+    ),
   phone: z
     .string()
     .optional()
     .or(z.literal(""))
     .refine(
       (val) => !val || val.length === 0 || val.length >= 8,
-      "Not less than 8 digits"
+      "Not less than 8 digits",
     )
     .refine(
       (val) => !val || val.length === 0 || val.length <= 15,
-      "Not more than 15 digits"
+      "Not more than 15 digits",
     )
     .refine(
       (val) => !val || val.length === 0 || /^[0-9]{8,15}$/.test(val),
-      "Enter a valid phone number"
+      "Enter a valid phone number",
     ),
 });
 
@@ -77,7 +93,13 @@ type PhoneInputProps = {
   onCountryChange: (country: CountryCode, code: string) => void;
 };
 
-const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange }: PhoneInputProps) => {
+const PhoneInput = ({
+  value,
+  onChange,
+  countryCode,
+  callingCode,
+  onCountryChange,
+}: PhoneInputProps) => {
   const [localPhone, setLocalPhone] = useState(value || "");
   const [showPicker, setShowPicker] = useState(false);
 
@@ -92,8 +114,16 @@ const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange
   };
 
   return (
-    <View style={[styles.phoneContainer, { flexDirection: "row", alignItems: "center" }]}>
-      <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginRight: 8 }} onPress={() => setShowPicker(true)}>
+    <View
+      style={[
+        styles.phoneContainer,
+        { flexDirection: "row", alignItems: "center" },
+      ]}
+    >
+      <TouchableOpacity
+        style={{ flexDirection: "row", alignItems: "center", marginRight: 8 }}
+        onPress={() => setShowPicker(true)}
+      >
         <CountryPicker
           visible={showPicker}
           withFlag
@@ -104,12 +134,18 @@ const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange
           onClose={() => setShowPicker(false)}
         />
         <Text style={styles.callingText}>+{callingCode}</Text>
-        <Ionicons name="chevron-down" size={18} color="#38242D" style={{ marginLeft: 4 }} />
+        <Ionicons
+          name="chevron-down"
+          size={18}
+          color="#38242D"
+          style={{ marginLeft: 4 }}
+        />
       </TouchableOpacity>
 
       <TextInput
         style={[styles.phoneInput, { flex: 1 }]}
         placeholder="Enter Phone Number"
+        placeholderTextColor="#999999"
         value={localPhone}
         keyboardType="phone-pad"
         onChangeText={(text) => {
@@ -120,20 +156,26 @@ const PhoneInput = ({ value, onChange, countryCode, callingCode, onCountryChange
         }}
       />
 
-      <Ionicons name="call-outline" size={20} color="#6B2D4C" style={{ marginLeft: 8 }} />
+      <Ionicons
+        name="call-outline"
+        size={20}
+        color="#6B2D4C"
+        style={{ marginLeft: 8 }}
+      />
     </View>
   );
 };
 
 /* --------------------- Get country by calling code --------------------- */
-const getCountryCodeFromCallingCode = async (callingCode: string): Promise<{ countryCode: CountryCode }> => {
+const getCountryCodeFromCallingCode = async (
+  callingCode: string,
+): Promise<{ countryCode: CountryCode }> => {
   const allCountries = await getAllCountries(FlagType.FLAT);
-  const country = allCountries?.find((c) => c.callingCode?.includes(callingCode));
+  const country = allCountries?.find((c) =>
+    c.callingCode?.includes(callingCode),
+  );
   return { countryCode: country?.cca2 ?? "US" };
 };
-
-
-
 
 /* --------------------- Main Component --------------------- */
 export default function EditProfile() {
@@ -143,7 +185,7 @@ export default function EditProfile() {
 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [profileImage, setProfileImage] = useState<string>('');
+  const [profileImage, setProfileImage] = useState<string>("");
 
   const [countryCode, setCountryCode] = useState<CountryCode>("IN");
   const [callingCode, setCallingCode] = useState("91");
@@ -156,7 +198,13 @@ export default function EditProfile() {
     image: "",
   });
 
-  const { control, handleSubmit, setValue, watch, formState: { errors, isDirty } } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isDirty },
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: { firstName: "", lastName: "", phone: "" },
@@ -174,7 +222,7 @@ export default function EditProfile() {
   const [showSheet, setShowSheet] = useState(false);
 
   const openSheet = () => {
-    console.log("open sheet ======")
+    console.log("open sheet ======");
     setShowSheet(true);
     Animated.timing(slideAnim, {
       toValue: 0,
@@ -184,7 +232,7 @@ export default function EditProfile() {
   };
 
   const closeSheet = () => {
-    console.log("close sheet ======")
+    console.log("close sheet ======");
 
     Animated.timing(slideAnim, {
       toValue: 300,
@@ -192,7 +240,6 @@ export default function EditProfile() {
       useNativeDriver: true,
     }).start(() => setShowSheet(false));
   };
-
 
   /* --------------------- Header --------------------- */
   useLayoutEffect(() => {
@@ -224,7 +271,10 @@ export default function EditProfile() {
       const user = res?.data?.getUserById;
       if (!user) return;
 
-      const [code, number] = user.phone?.replace("+", "").split("-") || ["91", ""];
+      const [code, number] = user.phone?.replace("+", "").split("-") || [
+        "91",
+        "",
+      ];
       const countryIso = await getCountryCodeFromCallingCode(code);
 
       setCountryCode(countryIso?.countryCode);
@@ -248,44 +298,53 @@ export default function EditProfile() {
     }
   };
 
-  useEffect(() => { fetchProfile(); }, []);
-  useFocusEffect(useCallback(() => { fetchProfile(); }, []));
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, []),
+  );
 
   /* --------------------- Image Picker --------------------- */
   const pickFromCamera = async () => {
     // const perm = await ImagePicker.requestCameraPermissionsAsync();
 
-
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    console.log("permpermperm === ", status)
+    console.log("permpermperm === ", status);
     if (status !== "granted") {
       return showToast("error", "Camera permission is required");
-
-
     }
 
     // if (!perm.granted) return showToast("error", "Camera access needed");
-    console.log("CACCSACACAS before break === ")
+    console.log("CACCSACACAS before break === ");
     try {
-      const result = await ImagePicker?.launchCameraAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.5 });
-      console.log("CACCSACACAS === ", result)
+      const result = await ImagePicker?.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
+      console.log("CACCSACACAS === ", result);
       if (!result.canceled) setProfileImage(result?.assets[0]?.uri);
-    }
-    catch (err) {
+    } catch (err) {
       console.log("Camera error:", err);
     }
-
   };
 
   const pickFromGallery = async () => {
-    console.log("its inside enter")
-    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log("its inside enter");
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     console.log("permission given or run", perm);
     if (!perm.granted) return showToast("error", "Gallery access Required");
 
-    const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.7 });
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
     if (!result.canceled) setProfileImage(result.assets[0].uri);
   };
 
@@ -301,16 +360,24 @@ export default function EditProfile() {
     setUpdating(true);
     const safeImage = profileImage ?? "";
     try {
-      const phone = data.phone && data.phone.trim().length > 0
-        ? `+${callingCode}-${data.phone}`
-        : "";
+      const phone =
+        data.phone && data.phone.trim().length > 0
+          ? `+${callingCode}-${data.phone}`
+          : "";
       await updateUser({ ...data, phone, image: profileImage });
       showToast("success", "Profile updated");
 
-      originalRef.current = { ...data, phone: data.phone || "", callingCode, image: profileImage };
+      originalRef.current = {
+        ...data,
+        phone: data.phone || "",
+        callingCode,
+        image: profileImage,
+      };
 
-
-      userEvent.emit("profileUpdated", { name: `${data.firstName} ${data.lastName}`, image: profileImage });
+      userEvent.emit("profileUpdated", {
+        name: `${data.firstName} ${data.lastName}`,
+        image: profileImage,
+      });
     } catch {
       showToast("error", "Failed to update profile");
     } finally {
@@ -318,10 +385,17 @@ export default function EditProfile() {
     }
   };
 
-  if (loading) return <ActivityIndicator size="large" color="#F63E4C" style={{ flex: 1 }} />;
+  if (loading)
+    return (
+      <ActivityIndicator size="large" color="#F63E4C" style={{ flex: 1 }} />
+    );
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={90}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Text style={styles.text}>Edit Profile</Text>
@@ -330,7 +404,10 @@ export default function EditProfile() {
             <View style={styles.box}>
               <View style={styles.container}>
                 {profileImage ? (
-                  <Image source={{ uri: profileImage }} style={{ width: 100, height: 100, borderRadius: 100 }} />
+                  <Image
+                    source={{ uri: profileImage }}
+                    style={{ width: 100, height: 100, borderRadius: 100 }}
+                  />
                 ) : (
                   <EvilIcons name="camera" size={100} color="#F03745" />
                 )}
@@ -346,12 +423,19 @@ export default function EditProfile() {
               name="firstName"
               render={({ field: { value, onChange, onBlur } }) => (
                 <View style={styles.inputWrapper}>
-                  <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
+                  <TextInput
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    style={styles.input}
+                  />
                   <EvilIcons name="user" size={22} color="#A9A9A9" />
                 </View>
               )}
             />
-            {errors.firstName && <Text style={styles.error}>{errors.firstName.message}</Text>}
+            {errors.firstName && (
+              <Text style={styles.error}>{errors.firstName.message}</Text>
+            )}
 
             <Text style={styles.label}>Last Name</Text>
             <Controller
@@ -359,16 +443,27 @@ export default function EditProfile() {
               name="lastName"
               render={({ field: { value, onChange, onBlur } }) => (
                 <View style={styles.inputWrapper}>
-                  <TextInput value={value} onChangeText={onChange} onBlur={onBlur} style={styles.input} />
+                  <TextInput
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    style={styles.input}
+                  />
                   <EvilIcons name="user" size={22} color="#A9A9A9" />
                 </View>
               )}
             />
 
-            {errors.lastName && <Text style={styles.error}>{errors.lastName.message}</Text>}
+            {errors.lastName && (
+              <Text style={styles.error}>{errors.lastName.message}</Text>
+            )}
             <Text style={styles.label}>
               Phone Number{" "}
-              <Text style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}>(Optional)</Text>
+              <Text
+                style={{ fontSize: 13, color: "#9C7A7D", fontWeight: "400" }}
+              >
+                (Optional)
+              </Text>
             </Text>
             <Controller
               control={control}
@@ -386,10 +481,23 @@ export default function EditProfile() {
                 />
               )}
             />
-            {errors.phone && <Text style={styles.error}>{errors.phone.message}</Text>}
+            {errors.phone && (
+              <Text style={styles.error}>{errors.phone.message}</Text>
+            )}
 
-            <TouchableOpacity onPress={handleSubmit(onSubmit)} disabled={!isModified || updating} style={[styles.btn, (!isModified || updating) && { opacity: 0.5 }]}>
-              {updating ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Update</Text>}
+            <TouchableOpacity
+              onPress={handleSubmit(onSubmit)}
+              disabled={!isModified || updating}
+              style={[
+                styles.btn,
+                (!isModified || updating) && { opacity: 0.5 },
+              ]}
+            >
+              {updating ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.btnText}>Update</Text>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -409,7 +517,6 @@ export default function EditProfile() {
               setTimeout(() => {
                 pickFromCamera();
               }, 300);
-
             }}
           >
             <Text style={styles.optionText}>Take Photo</Text>
@@ -422,7 +529,6 @@ export default function EditProfile() {
               setTimeout(() => {
                 pickFromGallery();
               }, 300);
-
             }}
           >
             <Text style={styles.optionText}>Choose from Gallery</Text>
@@ -436,8 +542,3 @@ export default function EditProfile() {
     </KeyboardAvoidingView>
   );
 }
-
-
-
-
-
