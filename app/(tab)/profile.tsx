@@ -479,6 +479,8 @@ export default function Profile() {
             </>
           )}
         </Pressable>
+
+        <Text style={styles.attribution}>Designed by Leila Lotfi</Text>
       </View>
       {isDeleteAccount && (
         <DeleteAccount
@@ -800,6 +802,14 @@ export const styles = ScaledSheet.create({
     width: "12@ms",
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  attribution: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: "11@ms",
+    color: "#B3B3B3",
+    textAlign: "center",
+    marginTop: "16@ms",
   },
 
   /* ---- Support Section ---- */

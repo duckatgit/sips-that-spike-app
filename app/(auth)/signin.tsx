@@ -162,6 +162,8 @@ try {
                       placeholderTextColor="#9C7A7D"
                       keyboardType="email-address"
                       autoCapitalize="none"
+                      autoComplete="email"
+                      textContentType="emailAddress"
                     />
                     <Ionicons name="mail-outline" size={20} color="#F2AFA9" />
                   </View>
@@ -193,6 +195,8 @@ try {
                       onChangeText={onChange}
                       secureTextEntry={!showPassword}
                       placeholderTextColor="#9C7A7D"
+                      autoComplete="password"
+                      textContentType="password"
                     />
                     <TouchableOpacity
                       onPress={() => setShowPassword(!showPassword)}

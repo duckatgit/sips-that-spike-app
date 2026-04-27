@@ -1,61 +1,170 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Easing,
-  Image,
   Platform,
-  Pressable,
-  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   UIManager,
   View,
 } from "react-native";
-
-import { GETALLFAQ, GetData } from "@/service/Api";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { router, useRouter } from "expo-router";
 import { ScaledSheet } from "react-native-size-matters";
 
-// Enable smooth animations on Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// --------------------- CARD COMPONENT ---------------------
-const Card = ({ item }: any) => {
-  return (
-    <View style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
+const LEARN_SECTIONS = [
+  {
+    id: "1",
+    title: "Understanding Sugar-Sweetened Beverages (SSBs)",
+    content: `Sugar-sweetened beverages (SSBs) are drinks that have sugars added during processing or preparation. These added sugars may include sucrose (table sugar), high-fructose corn syrup, honey, or other caloric sweeteners.
 
-      <Pressable style={styles.button}>
-        <Text
-          style={styles.readMore}
-          onPress={() =>
-            router.push({
-              pathname: "/(tab)/article",
-              params: { id: item._id },
-            })
-          }
-        >
-          Read More
-        </Text>
-      </Pressable>
-    </View>
-  );
-};
+Examples of SSBs:
+• Soda and soft drinks
+• Fruit-flavored drinks (not 100% juice)
+• Sweetened teas
+• Energy drinks
+• Sports drinks
+• Flavored waters
+• Sweetened coffee drinks
 
+Not typically considered SSBs:
+• 100% fruit juice
+• Unsweetened beverages
+• Diet sodas
+• Black coffee
+• Plain tea
 
+Regular consumption of SSBs has been associated in research with outcomes such as weight gain, dental cavities, and metabolic health concerns.`,
+  },
+  {
+    id: "2",
+    title: "Calories vs. Sugar: What's the Difference?",
+    content: `Calories measure the amount of energy in food or drinks. Sugar is one type of ingredient that provides calories.
 
-// --------------------- FAQ CARD COMPONENT ---------------------
-const FaqCard = ({ item, expandedId, setExpandedId }: any) => {
-  const isExpanded = expandedId === item._id;
+All sugar contains calories, but not all calories come from sugar.
+
+Calories per gram:
+• Carbohydrates (including sugar): 4 cal/g
+• Protein: 4 cal/g
+• Fat: 9 cal/g
+• Alcohol: 7 cal/g
+
+Examples:
+• Some foods are high in calories but contain little or no sugar (like oils).
+• Some foods contain natural sugars but also fiber and nutrients (like fruit).
+• Some products may be high in both sugar and calories (like candy or soda).`,
+  },
+  {
+    id: "3",
+    title: "Understanding the Glycemic Index (GI)",
+    content: `The Glycemic Index (GI) is a scale (0–100) that estimates how quickly carbohydrate-containing foods or drinks raise blood sugar levels.
+
+• Low GI foods: Tend to raise blood sugar more gradually
+• High GI foods: Tend to raise blood sugar more quickly
+
+GI does not measure overall nutrition—it only reflects how quickly carbohydrates are absorbed.
+
+Important note:
+Some foods that are not sweet (like white bread or potatoes) can still have a high GI, while some fruits have a lower GI due to fiber and other nutrients.`,
+  },
+  {
+    id: "4",
+    title: "Reading Nutrition Labels",
+    content: `Nutrition labels provide helpful information about what's in a food or drink.
+
+Key sections:
+• Total Carbohydrates: Includes sugars, starches, and fiber
+• Dietary Fiber: Supports digestion
+• Total Sugars: Includes both natural and added sugars
+• Added Sugars: Sugars added during processing
+
+Example label:
+• Total Carbohydrates: 30g
+• Dietary Fiber: 5g
+• Total Sugars: 10g
+• Includes Added Sugars: 6g
+
+This means the product contains a mix of fiber, sugars, and other carbohydrates.`,
+  },
+  {
+    id: "5",
+    title: "Names for Added Sugars",
+    content: `Added sugars can appear under many different names on ingredient lists.
+
+Common types:
+• Words ending in "-ose" (e.g., glucose, fructose, sucrose)
+• Syrups (e.g., corn syrup, maple syrup, agave)
+• Other names (e.g., cane sugar, evaporated cane juice, molasses)
+
+Ingredients are listed in order by quantity, so items near the top appear in larger amounts.`,
+  },
+  {
+    id: "6",
+    title: "General Tips for Evaluating Drinks",
+    content: `When comparing beverages, people often look at:
+• Amount of added sugar
+• Total carbohydrates
+• Ingredient list
+
+Drinks with little or no added sugar and fewer refined ingredients are often considered different from highly sweetened beverages.`,
+  },
+  {
+    id: "7",
+    title: "GI and GL of Common Drinks",
+    content: `• Water: GI 0, GL 0
+• Soda: GI ~63–68, typically higher GL due to sugar content
+• Orange juice (100%): GI ~50–57
+• Apple juice: GI ~40–44
+• Milk: Low GI (~30–34), but still affects insulin response
+• Unsweetened soy milk: Low GI and low GL
+• Sweet tea / fruit punch: Often higher GI and GL if sweetened
+• Sports drinks: Can have high GI
+• Black coffee / unsweetened tea: GI 0, GL 0
+
+These values are estimates and can vary based on formulation and serving size.`,
+  },
+  {
+    id: "8",
+    title: "Glycemic Index vs. Insulin Index",
+    content: `Glycemic Index (GI): Measures how quickly blood sugar rises.
+
+Insulin Index (II): Measures how much insulin the body releases.
+
+These are different measurements. Some foods may have a low GI but still produce an insulin response.`,
+  },
+  {
+    id: "9",
+    title: "About Blood Sugar and Metabolic Health",
+    content: `Metabolic conditions, including prediabetes and type 2 diabetes, are being studied increasingly in children and adolescents.
+
+Research organizations such as the Centers for Disease Control and Prevention report that a significant number of U.S. adolescents show indicators associated with prediabetes.
+
+Studies from institutions like the Harvard T.H. Chan School of Public Health have examined links between frequent consumption of sugary beverages and changes in how the body processes sugar and insulin.
+
+Sugary drinks can contain large amounts of added sugar—for example, a typical 12-ounce soda may contain around 39 grams.
+
+Unlike many solid foods, beverages may be consumed quickly and may not create the same sense of fullness, which can influence total energy intake.`,
+  },
+];
+
+const AccordionSection = ({
+  item,
+  expandedId,
+  setExpandedId,
+}: {
+  item: (typeof LEARN_SECTIONS)[number];
+  expandedId: string | null;
+  setExpandedId: (id: string | null) => void;
+}) => {
+  const isExpanded = expandedId === item.id;
   const animation = useRef(new Animated.Value(0)).current;
   const [contentHeight, setContentHeight] = useState(0);
 
@@ -69,18 +178,18 @@ const FaqCard = ({ item, expandedId, setExpandedId }: any) => {
   }, [isExpanded, contentHeight]);
 
   const rotate = animation.interpolate({
-    inputRange: [0, contentHeight],
+    inputRange: [0, Math.max(contentHeight, 1)],
     outputRange: ["0deg", "180deg"],
   });
 
-  const toggleExpand = () => {
-    setExpandedId(isExpanded ? null : item._id);
-  };
-
   return (
-    <View style={styles.faqCard}>
-      <TouchableOpacity activeOpacity={0.8} style={styles.faqHeader} onPress={toggleExpand}>
-        <Text style={styles.faqQuestion}>{item.question}</Text>
+    <View style={styles.sectionCard}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.sectionHeader}
+        onPress={() => setExpandedId(isExpanded ? null : item.id)}
+      >
+        <Text style={styles.sectionTitle}>{item.title}</Text>
         <Animated.View
           style={[
             styles.iconCircle,
@@ -90,32 +199,28 @@ const FaqCard = ({ item, expandedId, setExpandedId }: any) => {
         >
           <Ionicons
             name={isExpanded ? "remove" : "add"}
-            size={30}
+            size={20}
             color={isExpanded ? "#fff" : "#1B1919"}
-            style={{ fontWeight: "400" }}
           />
         </Animated.View>
       </TouchableOpacity>
 
       <Animated.View
-        style={[
-          styles.faqAnswerContainer,
-          {
-            height: animation,
-            opacity: animation.interpolate({
-              inputRange: [0, 10],
-              outputRange: [0, 1],
-            }),
-            overflow: "hidden",
-          },
-        ]}
+        style={{
+          height: animation,
+          overflow: "hidden",
+          opacity: animation.interpolate({
+            inputRange: [0, 10],
+            outputRange: [0, 1],
+          }),
+        }}
       >
         {isExpanded && (
           <View
             style={{ position: "absolute", top: 0, left: 0, right: 0 }}
             onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
           >
-            <Text style={styles.faqAnswer}>{item.answer}</Text>
+            <Text style={styles.sectionContent}>{item.content}</Text>
           </View>
         )}
       </Animated.View>
@@ -123,281 +228,88 @@ const FaqCard = ({ item, expandedId, setExpandedId }: any) => {
   );
 };
 
-// --------------------- MAIN LEARN SCREEN ---------------------
 export default function Learn() {
-  const router = useRouter();
   const scrollRef = useRef<ScrollView>(null);
-  const [expandedId, setExpandedId] = useState(null);
-  const [articles, setArticles] = useState<any[]>([]);
-  const [FAQS, setFAQS] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
       scrollRef.current?.scrollTo({ y: 0, animated: false });
     }, [])
   );
-const scroll = useRef<ScrollView>(null);
-
-useFocusEffect(
-  React.useCallback(() => {
-    // Reset scroll to top
-    scroll.current?.scrollTo({ y: 0, animated: false });
-
-    // Re-fetch data every time the screen comes into focus
-    fetchArticles();
-
-    return () => {}; // optional cleanup
-  }, [])
-);
-  const fetchArticles = async () => {
-    try {
-      if (!refreshing) setLoading(true);
-
-      const data = await GetData();
-      const FAQ = await GETALLFAQ();
-
-      const articlesArray = data?.getAllArticle.articles.map((article: any) => {
-        let imageUrl = article.image;
-        if (!imageUrl.startsWith("http")) {
-          imageUrl = `https://sipsthatspike.s3.eu-north-1.amazonaws.com/articles/${imageUrl}`;
-        }
-
-        const keyNumbers = article.keyNumbers?.map((kn: any) => {
-          let knImage = kn.image;
-          if (!knImage.startsWith("http")) {
-            knImage = `https://sipsthatspike.s3.eu-north-1.amazonaws.com/keynumbers/${knImage}`;
-          }
-          return { ...kn, image: knImage };
-        });
-
-        return { ...article, image: imageUrl, keyNumbers };
-      });
-
-      setArticles(articlesArray || []);
-      setFAQS(FAQ?.faqs?.faqs || []);
-    } catch (error) {
-      // console.error("Error fetching articles:", error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchArticles();
-  };
-
-  if (loading && !refreshing) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#F63E4C" />
-        <Text style={styles.loadingText}>Loading content...</Text>
-      </View>
-    );
-  }
 
   return (
-    // <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-      style={{flex:1,backgroundColor:"#fff"}}
-        showsVerticalScrollIndicator={false}
-        ref={scrollRef}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#F63E4C"]}
-            tintColor="#F63E4C"
-          />
-        }
-      >
-        {/* <View style={styles.container}>
-          {Array.isArray(articles) && articles.length > 0 ? (
-            articles.map((item) => <Card key={item._id} item={item} />)
-          ) : (
-            <Text>No articles found</Text>
-          )}
-
-          <Text style={styles.sectionTitle}>FAQ</Text>
-          <View style={styles.faqContainer}>
-            {FAQS.map((item) => (
-              <FaqCard
-                key={item._id}
-                item={item}
-                expandedId={expandedId}
-                setExpandedId={setExpandedId}
-              />
-            ))}
-          </View>
-        </View> */}
-
-<View style={styles.container}>
-  {/* Articles Section */}
-  {Array.isArray(articles) && articles.length > 0 ? (
-    articles.map((item) => <Card key={item._id} item={item} />)
-  ) : (
-    <View style={styles.emptyBox}>
-      <Text style={styles.emptyTitle}>No Articles Available</Text>
-      <Text style={styles.emptySub}>
-        We couldn't find any articles right now. Please check back later.
-      </Text>
-    </View>
-  )}
-
-  {/* FAQ Section */}
-  <Text style={styles.sectionTitle}>FAQ</Text>
-  <View style={styles.faqContainer}>
-    {Array.isArray(FAQS) && FAQS.length > 0 ? (
-      FAQS.map((item) => (
-        <FaqCard
-          key={item._id}
-          item={item}
-          expandedId={expandedId}
-          setExpandedId={setExpandedId}
-        />
-      ))
-    ) : (
-      <View style={styles.emptyBox}>
-        <Text style={styles.emptyTitle}>No FAQs Available</Text>
-        <Text style={styles.emptySub}>
-          FAQ section is currently empty. We'll update it soon!
+    <ScrollView
+      ref={scrollRef}
+      style={styles.scroll}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
+        <Text style={styles.intro}>
+          Learn about sugar-sweetened beverages, glycemic index, and how to make
+          informed choices about what you drink.
         </Text>
-      </View>
-    )}
-  </View>
-</View>
+        {LEARN_SECTIONS.map((item) => (
+          <AccordionSection
+            key={item.id}
+            item={item}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+          />
+        ))}
 
-      </ScrollView>
-    // </SafeAreaView>
+        <View style={styles.noteCard}>
+          <Text style={styles.noteTitle}>Important Note</Text>
+          <Text style={styles.noteContent}>
+            This information is intended for general educational purposes only
+            and does not replace guidance from qualified healthcare
+            professionals. Individual nutritional needs and health
+            considerations can vary.
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
-// --------------------- STYLES ---------------------
 const styles = ScaledSheet.create({
-  safeArea: {
+  scroll: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingBottom: "74@ms",
-  },
-  emptyBox: {
-    marginTop:"40%",
-  alignItems: "center",
-  justifyContent: "center",
-  paddingVertical: 20,
-},
-emptyTitle: {
-  fontSize: 16,
-  fontWeight: "600",
-  color: "#444",
-},
-emptySub: {
-  fontSize: 14,
-  color: "#777",
-  marginTop: 5,
-  textAlign: "center",
-  width: "80%",
-},
-
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  loadingText: {
-    marginTop: "10@vs",
-    fontSize: "14@ms",
-    color: "#75748E",
-    fontFamily: "Poppins_500Medium",
   },
   container: {
     flex: 1,
-    height:"90%",
-    padding: "10@s",
-    // borderWidth:1,
-    // borderColor:"black",
-    // paddingBottom: "30@s",
-    backgroundColor: "#fff",
+    paddingHorizontal: "16@ms",
+    paddingTop: "12@ms",
     paddingBottom: "120@ms",
+    backgroundColor: "#fff",
   },
-  card: {
-    backgroundColor: "#f8f8f8",
-    borderRadius: "10@s",
-    padding: "12@s",
-    marginBottom: "15@vs",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: "6@s",
-    elevation: 3,
-  },
-  image: {
-    width: "100%",
-    height: "180@vs",
-    borderRadius: "10@s",
-    marginBottom: "10@vs",
-  },
-  title: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: "18@ms",
-    color: "#1B1919",
-    lineHeight: "28@ms",
-    marginBottom: "6@vs",
-  },
-  description: {
-    fontFamily: "Poppins_400Medium",
-    fontSize: "15@ms",
-    lineHeight: "22@ms",
+  intro: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: "14@ms",
     color: "#75748E",
+    lineHeight: "22@ms",
+    marginBottom: "16@ms",
   },
-  button: {
-    marginTop: "18@vs",
-    width: "158@ms",
-    height: "42@ms",
-    borderRadius: "30@ms",
-    backgroundColor: "#F63E4C",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  readMore: {
-    fontFamily: "Poppins_500Medium",
-    fontWeight: "700",
-    fontSize: "16@ms",
-    color: "#FFFFFF",
-  },
-  sectionTitle: {
-    marginLeft: "10@ms",
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: "20@ms",
-    color: "#1B1919",
-    marginVertical: "10@vs",
-  },
-  faqContainer: {},
-  faqCard: {
+  sectionCard: {
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#EDEDF2",
-    paddingVertical: "5@vs",
+    paddingVertical: "4@vs",
   },
-  faqHeader: {
+  sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: "10@vs",
-    paddingHorizontal: "5@s",
-    marginTop: "10@vs",
+    paddingVertical: "12@vs",
+    paddingHorizontal: "4@s",
   },
-  faqQuestion: {
+  sectionTitle: {
     fontFamily: "Poppins_500Medium",
-    fontSize: "16@ms",
+    fontSize: "15@ms",
     color: "#1B1919",
     flex: 1,
+    paddingRight: "8@ms",
   },
   iconCircle: {
     width: "28@ms",
@@ -413,38 +325,32 @@ emptySub: {
     backgroundColor: "#F63E4C",
     borderColor: "#F63E4C",
   },
-  faqAnswerContainer: {
-    paddingHorizontal: "5@s",
-    paddingBottom: "10@vs",
-  },
-  faqAnswer: {
+  sectionContent: {
     fontFamily: "Poppins_400Regular",
     fontSize: "13@ms",
-    lineHeight: "20@ms",
+    lineHeight: "21@ms",
     color: "#75748E",
-    paddingBottom: "10@vs",
+    paddingHorizontal: "4@s",
+    paddingBottom: "14@vs",
+  },
+  noteCard: {
+    marginTop: "20@vs",
+    backgroundColor: "#FFF6F1",
+    borderLeftWidth: 4,
+    borderLeftColor: "#F63E4C",
+    borderRadius: "8@ms",
+    padding: "14@ms",
+  },
+  noteTitle: {
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: "14@ms",
+    color: "#1B1919",
+    marginBottom: "6@vs",
+  },
+  noteContent: {
+    fontFamily: "Poppins_400Regular",
+    fontSize: "13@ms",
+    lineHeight: "21@ms",
+    color: "#75748E",
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

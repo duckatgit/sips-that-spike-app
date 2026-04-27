@@ -4,10 +4,13 @@ import React, { JSX, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  Linking,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,6 +32,7 @@ export default function Home(): JSX.Element {
   const [Aidata, setaidata] = useState<any>(null);
   const router = useRouter();
   const [showConsent, setShowConsent] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleScanPress = async () => {
     const alreadyConsented = await checkAIConsent();
@@ -39,18 +43,6 @@ export default function Home(): JSX.Element {
     }
   };
   // ------------------ helpers: risk & flow ------------------
-  const getRiskColorFromTotal = (sugar: number) => {
-    if (sugar > 10) return "#FF4D4D";
-    if (sugar >= 5) return "#FFA500";
-    return "#4CAF50";
-  };
-
-  const getRiskLabelFromTotal = (sugar: number) => {
-    if (sugar > 10) return "High";
-    if (sugar >= 5) return "Moderate";
-    return "Low";
-  };
-
   const generateSugarFlow = (base: number) => {
     const safe = isFinite(base) ? base : 0;
     return [
@@ -133,8 +125,23 @@ export default function Home(): JSX.Element {
     }, []),
   );
 
-  const riskColor = getRiskColorFromTotal(safeSugar);
-  const riskLabel = getRiskLabelFromTotal(safeSugar);
+  const spikePercentage = Number(result?.spikePercentage ?? 0);
+  const safeSpikePercentage = Number.isFinite(spikePercentage) ? spikePercentage : 0;
+
+  const getSpikeColor = (spike: number) => {
+    if (spike < 50) return "#4CAF50";
+    if (spike < 80) return "#FFA500";
+    return "#FF4D4D";
+  };
+
+  const getSpikeLabel = (spike: number) => {
+    if (spike < 50) return "Low";
+    if (spike < 80) return "Moderate";
+    return "High";
+  };
+
+  const riskColor = getSpikeColor(safeSpikePercentage);
+  const riskLabel = getSpikeLabel(safeSpikePercentage);
 
   const riskData = {
     labels: new Array(riskChartValues.length).fill(""),
@@ -245,8 +252,9 @@ export default function Home(): JSX.Element {
             <View style={styles.card}>
               <View style={styles.cardContent}>
                 <View>
-                  <Text style={styles.cardTitle}>Risk Level</Text>
-                  <Text style={styles.cardValue}>{riskLabel}</Text>
+                  <Text style={styles.cardTitle}>Glucose Spike</Text>
+                  <Text style={[styles.cardValue, { color: riskColor }]}>{riskLabel}</Text>
+                  <Text style={[styles.cardSpikeValue, { color: riskColor }]}>{safeSpikePercentage.toFixed(0)}%</Text>
                 </View>
 
                 <Image
@@ -404,6 +412,61 @@ export default function Home(): JSX.Element {
             </View>
           </View> */}
 
+          {/* Disclaimer */}
+          <View style={styles.disclaimerWrapper}>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Text style={styles.disclaimerLink}>
+                <Text style={styles.disclaimerNote}>Note: </Text>
+                <Text style={styles.disclaimerUnderline}>Disclaimer & Data Source</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Modal
+            visible={modalVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <ScrollView>
+                  <Text style={styles.modalTitle}>Disclaimer</Text>
+                  <Text style={styles.modalText}>
+                    This application is provided for informational and educational
+                    purposes only. The content displayed in the app is not intended
+                    to provide medical advice, diagnosis, treatment, or healthcare
+                    recommendations.
+                  </Text>
+                  <Text style={styles.modalText}>
+                    Nutritional information shown in this app is sourced from the
+                    Open Food Facts public database and may be incomplete or
+                    inaccurate. Users should verify information independently when
+                    necessary.
+                  </Text>
+                  <Text
+                    style={styles.linkText}
+                    onPress={() => Linking.openURL("https://world.openfoodfacts.org/")}
+                  >
+                    Data provided by Open Food Facts — https://world.openfoodfacts.org/
+                  </Text>
+                  <Text style={styles.modalText}>
+                    Any scores, labels, or insights presented in the app are based
+                    solely on nutritional data and are intended for general
+                    informational use only. They should not be interpreted as
+                    medical, health, or clinical evaluations.
+                  </Text>
+                </ScrollView>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.closeText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
           {/* Bottom small cards */}
           {/* <View style={styles.bottomSection}>
             <Pressable
@@ -501,6 +564,12 @@ export const styles = ScaledSheet.create({
     color: "#333",
     marginTop: "6@ms",
     fontWeight: "600",
+  },
+
+  cardSpikeValue: {
+    fontSize: "13@ms",
+    fontWeight: "500",
+    marginTop: "2@ms",
   },
 
   chart: {
@@ -763,6 +832,48 @@ export const styles = ScaledSheet.create({
   bottomText: {
     alignItems: "center",
   },
+
+  // ---------- DISCLAIMER ----------
+  disclaimerWrapper: {
+    marginHorizontal: "20@ms",
+    marginTop: "20@ms",
+    marginBottom: "10@ms",
+    alignItems: "center",
+  },
+  disclaimerLink: {
+    fontSize: "13@ms",
+  },
+  disclaimerNote: {
+    color: "#75748E",
+    fontFamily: "Poppins_400Regular",
+  },
+  disclaimerUnderline: {
+    color: "blue",
+    textDecorationLine: "underline",
+    fontFamily: "Poppins_400Regular",
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
+  modalText: { fontSize: 16, marginBottom: 10 },
+  linkText: {
+    fontSize: 16,
+    color: "#007AFF",
+    textDecorationLine: "underline",
+    marginBottom: 10,
+  },
+  closeButton: { marginTop: 10, alignSelf: "center", padding: 10 },
+  closeText: { fontSize: 16, color: "#007AFF", fontWeight: "bold" },
 
   // ---------- LOADER ----------
   loaderContainer: {

@@ -1,20 +1,16 @@
 {
   "expo": {
-    "name": "SIPS-THAT-SPIKE",
-    "slug": "SIPS-THAT-SPIKE",
-    "version": "1.0.0",
+    "name": "Sips That Spike",
+    "slug": "sips-that-spike",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/spl.png",
     "scheme": "sipsthatspike",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "jsEngine": "hermes",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "platforms": [
-      "ios"
-    ],
+    "assetBundlePatterns": ["**/*"],
+    "platforms": ["ios"],
     "ios": {
       "supportsTablet": false,
       "requireFullScreen": true,
@@ -67,10 +63,7 @@
         "expo-build-properties",
         {
           "android": {
-            "buildArchs": [
-              "arm64-v8a",
-              "armeabi-v7a"
-            ]
+            "buildArchs": ["arm64-v8a", "armeabi-v7a"]
           }
         }
       ]
@@ -82,8 +75,9 @@
       "EXPO_PUBLIC_API_URL": "https://sips-that-spike-be.mmopro.in",
       "router": {},
       "eas": {
-        "projectId": "44baa685-b9c8-4452-a910-f1398893bd3a"
+        "projectId": "7bc2cc87-d997-4b45-b119-57d723739ffa"
       }
-    }
+    },
+    "owner": "devduck01"
   }
 }

@@ -134,7 +134,7 @@ export default function TabLayout() {
               <Text style={styles.headerSubtitle}>
                 Let's track your sugar today
               </Text>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
+              {/*<TouchableOpacity onPress={() => setModalVisible(true)}>
                 <Text>
                   <Text style={{ textDecorationLine: "none" }}>Note: </Text>
                   <Text
@@ -143,7 +143,7 @@ export default function TabLayout() {
                     Disclaimer & Data Source
                   </Text>
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity>*/}
 
               <Modal
                 visible={modalVisible}
@@ -202,7 +202,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen name="log" options={{ title: "Log" }} />
-      {/* <Tabs.Screen name="learn" options={{ title: "Learn" }} /> */}
+      <Tabs.Screen name="learn" options={{ title: "Learn" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
       <Tabs.Screen
         name="scan"
@@ -227,7 +227,7 @@ function CustomTabBar({ state, handlePress, scan }: CustomTabBarProps) {
   const tabs = [
     { name: "home", label: "Home", icon: "home-outline" },
     { name: "log", label: "Log", icon: "book-outline" },
-    // { name: "learn", label: "Learn", icon: "school-outline" },
+    { name: "learn", label: "Learn", icon: "school-outline" },
     { name: "profile", label: "Profile", icon: "person-outline" },
   ] as const;
 
@@ -298,18 +298,18 @@ const styles = ScaledSheet.create({
     borderRadius: "40@ms",
     paddingVertical: "10@ms",
     paddingHorizontal: "10@ms",
-    width: "260@ms",
+    width: "300@ms",
     borderColor: "#FFEBDF",
     alignItems: "center",
     height: "66@ms",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
   },
   tabItem: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: "6@ms",
     paddingHorizontal: "1@ms",
-    width: "60@ms",
+    width: "55@ms",
     borderRadius: "40@ms",
   },
   label: {
@@ -367,7 +367,7 @@ const styles = ScaledSheet.create({
     fontFamily: "Poppins_600SemiBold",
   },
   headerSubtitle: {
-    fontSize: "14@ms",
+    fontSize: "18@ms",
     color: "#75748E",
     fontFamily: "Poppins_400Regular",
     marginTop: "2@ms",
